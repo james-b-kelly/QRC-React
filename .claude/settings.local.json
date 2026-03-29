@@ -6,7 +6,8 @@
       "mcp__claude_ai_Linear__get_issue",
       "mcp__claude_ai_Linear__create_issue_label",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(gh repo:*)"
     ]
   }
 }
