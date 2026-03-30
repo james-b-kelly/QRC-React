@@ -33,7 +33,7 @@ export default function Layout() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle navigation menu"
-              className="sm:hidden flex items-center justify-center w-10 h-10 -mr-2 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+              className="sm:hidden flex items-center justify-center w-11 h-11 -mr-2 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
             >
               <svg className="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 {mobileMenuOpen ? (
@@ -49,32 +49,32 @@ export default function Layout() {
         {/* Mobile menu dropdown */}
         {mobileMenuOpen && (
           <div className="sm:hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-md">
-            <div className="px-6 py-4 space-y-1">
+            <div className="px-6 py-3">
               <a
                 href="/#how-it-works"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-3 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="block py-3.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 How it works
               </a>
               <a
                 href="/#pricing"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-3 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="block py-3.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 Pricing
               </a>
               <a
                 href="/#faq"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-3 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="block py-3.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 FAQ
               </a>
               <Link
                 to="/editor"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block mt-2 rounded-lg bg-slate-900 px-4 py-3 text-sm font-medium text-white text-center hover:bg-slate-800 transition-colors"
+                className="block mt-2 rounded-lg bg-slate-900 px-4 py-3.5 text-sm font-medium text-white text-center hover:bg-slate-800 transition-colors"
               >
                 Create QR Code
               </Link>

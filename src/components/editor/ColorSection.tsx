@@ -55,7 +55,7 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
                 role="radio"
                 aria-checked={fgMode === 'solid'}
                 onClick={() => toggleFgMode('solid')}
-                className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-colors cursor-pointer ${fgMode === 'solid' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-300 text-slate-500 hover:border-slate-400'}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer ${fgMode === 'solid' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-300 text-slate-500 hover:border-slate-400'}`}
               >
                 Solid
               </button>
@@ -64,7 +64,7 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
                 role="radio"
                 aria-checked={fgMode === 'gradient'}
                 onClick={() => toggleFgMode('gradient')}
-                className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-colors cursor-pointer ${fgMode === 'gradient' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-300 text-slate-500 hover:border-slate-400'}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer ${fgMode === 'gradient' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-300 text-slate-500 hover:border-slate-400'}`}
               >
                 Gradient
               </button>
@@ -84,7 +84,7 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
         <div>
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs font-medium text-slate-500">Background</p>
-            <label className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 cursor-pointer">
+            <label className="flex items-center gap-2 min-h-[44px] text-xs font-medium text-slate-500 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isTransparent}
@@ -95,7 +95,7 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
                       : { type: 'solid', color: '#FFFFFF' }
                   )
                 }}
-                className="rounded border-slate-300"
+                className="w-5 h-5 rounded border-slate-300"
               />
               Transparent
             </label>
