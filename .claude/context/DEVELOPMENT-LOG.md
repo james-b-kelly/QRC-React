@@ -1,5 +1,48 @@
 # Development Log
 
+## 2026-03-29 | QR code customisation editor UI
+
+TYPE: feature
+FILES: src/pages/Editor.tsx, src/components/editor/*.tsx (13 components)
+COMMIT: a4aba8a
+CONTEXT: QRC-16 — full editor UI for designing QR codes with live preview.
+CHANGES:
+- Two-panel responsive layout (controls left, sticky preview right; stacked on mobile)
+- QRPreview renders engine SVG output via dangerouslySetInnerHTML
+- ContentSection: 7 data types (URL, text, WiFi, vCard, email, phone, SMS) with dynamic input fields and 150ms debounce
+- StyleSection + StyleOption: visual dot/corner style pickers with mini QR previews
+- ColorSection + ColorPicker + GradientPicker: solid/gradient foreground, solid/transparent background
+- LogoSection: drag-and-drop upload, 2MB limit, size/padding sliders, auto-ECL note
+- AdvancedSection: ECL segmented control, margin slider
+- DownloadButton: SVG + PNG download (Stripe placeholder)
+- PresetsSection: 4 presets (Minimal, Bold, Gradient, Classic) + randomise button
+- Code review fixes: ColorPicker sync on prop change, ColorSection fgMode/savedGradient sync on preset, empty data fallback, logo file size guard, keyboard accessibility on drop zone, aria-label on preview
+DECISIONS:
+- Used native HTML color input rather than adding a color picker dependency
+- Collapsible sections via <details> for clean UX without extra state management
+- All state managed in Editor.tsx as single QROptions object, passed down as props
+
+## 2026-03-29 | QR code generation engine
+
+TYPE: feature
+FILES: src/lib/qr-engine/types.ts, matrix.ts, dots.ts, corners.ts, svg-renderer.ts, export.ts, formatters.ts, index.ts
+COMMIT: 3385a27
+CONTEXT: Core QR engine for QRC-15 — generates styled QR codes client-side with custom SVG rendering.
+CHANGES:
+- Matrix generation wrapper around `qrcode` npm package with finder pattern detection
+- 5 dot styles: square, rounded, dots, classy, classy-rounded (SVG path generators)
+- 4 corner square styles + 2 corner dot styles with proper evenodd fill-rule for cutouts
+- SVG renderer with solid/gradient colors, background, margin, logo embedding
+- Logo quiet zone clearing + auto error correction bump (Q for small logos, H for >10%)
+- PNG export via canvas drawImage from SVG blob
+- Data type formatters: URL, WiFi, vCard, email, phone, SMS
+- Public API: generateQRCode(options) => { svg, toPNG }
+DECISIONS:
+- Build SVG strings directly (no DOM) for performance — no dependency on browser for generation
+- Use evenodd fill-rule on corner square paths so all winding directions produce correct cutouts
+- Removed shape-rendering="crispEdges" — breaks anti-aliasing on rounded/dot styles
+- gradientUnits="userSpaceOnUse" on gradients so corners share same gradient sweep as data dots
+
 ## 2026-03-29 | Project scaffold setup
 
 TYPE: config
