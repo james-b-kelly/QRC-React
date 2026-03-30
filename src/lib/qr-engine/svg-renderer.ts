@@ -27,13 +27,6 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
   const totalModules = matrix.size + margin * 2
   const moduleSize = size / totalModules
 
-  const ctx: RenderContext = {
-    matrix,
-    moduleSize,
-    margin,
-    options: { ...options, dotStyle, size },
-  }
-
   const defs: string[] = []
   const uid = Math.random().toString(36).slice(2, 8)
   let gradientId = 0

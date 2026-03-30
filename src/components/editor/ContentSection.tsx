@@ -27,7 +27,7 @@ export default function ContentSection({ onDataChange }: ContentSectionProps) {
   const [emailFields, setEmailFields] = useState<EmailFields>({ address: '' })
   const [smsFields, setSmsFields] = useState<SMSFields>({ number: '' })
 
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => {
     clearTimeout(debounceRef.current)

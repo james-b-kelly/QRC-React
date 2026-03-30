@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import type { CornerDotStyle, CornerSquareStyle, DotStyle, CornerOptions } from '../../lib/qr-engine'
 import SectionWrapper from './SectionWrapper'
 import StyleOption from './StyleOption'
