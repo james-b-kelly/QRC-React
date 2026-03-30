@@ -22,7 +22,7 @@ const PRESETS: Preset[] = [
     name: 'Bold',
     dotStyle: 'rounded',
     cornerOptions: { squareStyle: 'rounded', dotStyle: 'dot' },
-    foregroundColor: { type: 'solid', color: '#4f46e5' },
+    foregroundColor: { type: 'solid', color: '#2563eb' },
     backgroundColor: { type: 'solid', color: '#FFFFFF' },
   },
   {
@@ -62,7 +62,7 @@ export default function PresetsSection({ onApplyPreset }: PresetsSectionProps) {
     return PRESETS.map((p) =>
       generateQRCode({
         data: 'QR',
-        size: 48,
+        size: 56,
         margin: 1,
         dotStyle: p.dotStyle,
         cornerOptions: p.cornerOptions,
@@ -92,27 +92,27 @@ export default function PresetsSection({ onApplyPreset }: PresetsSectionProps) {
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold text-gray-700">Quick styles</p>
+    <div>
+      <div className="flex items-center justify-between mb-2.5">
+        <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Quick styles</span>
         <button
           type="button"
           onClick={randomise}
-          className="px-3 py-1 text-xs rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+          className="text-[11px] font-medium text-brand-500 hover:text-brand-700 transition-colors cursor-pointer"
         >
           Randomise
         </button>
       </div>
-      <div className="flex gap-2">
+      <div className="grid grid-cols-4 gap-2">
         {PRESETS.map((preset, i) => (
           <button
             key={preset.name}
             type="button"
             onClick={() => onApplyPreset(preset)}
-            className="flex flex-col items-center gap-1 p-1.5 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors cursor-pointer flex-1"
+            className="flex flex-col items-center gap-1 py-2.5 px-1 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors duration-150 cursor-pointer"
           >
-            <div className="w-12 h-12 rounded overflow-hidden" dangerouslySetInnerHTML={{ __html: previewSvgs[i] }} />
-            <span className="text-[10px] text-gray-500">{preset.name}</span>
+            <div aria-hidden="true" className="w-11 h-11 [&>svg]:w-full [&>svg]:h-full" dangerouslySetInnerHTML={{ __html: previewSvgs[i] }} />
+            <span className="text-[10px] font-medium text-slate-500">{preset.name}</span>
           </button>
         ))}
       </div>

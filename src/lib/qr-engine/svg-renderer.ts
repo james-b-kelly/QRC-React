@@ -35,18 +35,19 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
   }
 
   const defs: string[] = []
+  const uid = Math.random().toString(36).slice(2, 8)
   let gradientId = 0
 
   // Build foreground color/gradient
   const fgColor = options.foregroundColor ?? { type: 'solid', color: '#000000' }
-  const fgFill = resolveColor(fgColor, `fg-grad-${gradientId++}`, defs)
+  const fgFill = resolveColor(fgColor, `fg-${uid}-${gradientId++}`, defs, size)
 
   // Build corner colors
   const cornerOpts = options.cornerOptions ?? {}
   const cornerSquareColor = cornerOpts.squareColor ?? fgColor
   const cornerDotColor = cornerOpts.dotColor ?? fgColor
-  const cornerSquareFill = resolveColor(cornerSquareColor, `cs-grad-${gradientId++}`, defs)
-  const cornerDotFill = resolveColor(cornerDotColor, `cd-grad-${gradientId++}`, defs)
+  const cornerSquareFill = resolveColor(cornerSquareColor, `cs-${uid}-${gradientId++}`, defs, size)
+  const cornerDotFill = resolveColor(cornerDotColor, `cd-${uid}-${gradientId++}`, defs, size)
 
   // Background
   const bgColor = options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }
@@ -54,7 +55,7 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
   if (bgColor.type === 'solid' && bgColor.color === 'transparent') {
     // No background
   } else {
-    const bgFill = resolveColor(bgColor, `bg-grad-${gradientId++}`, defs)
+    const bgFill = resolveColor(bgColor, `bg-${uid}-${gradientId++}`, defs, size)
     bgRect = `<rect x="0" y="0" width="${size}" height="${size}" fill="${bgFill}"/>`
   }
 
@@ -141,34 +142,37 @@ function resolveColor(
   config: ColorConfig,
   gradientId: string,
   defs: string[],
+  svgSize: number,
 ): string {
   if (config.type === 'solid') {
     return config.color ?? '#000000'
   }
 
   if (config.gradient) {
-    defs.push(renderGradientDef(config.gradient, gradientId))
+    defs.push(renderGradientDef(config.gradient, gradientId, svgSize))
     return `url(#${gradientId})`
   }
 
   return '#000000'
 }
 
-function renderGradientDef(gradient: GradientConfig, id: string): string {
+function renderGradientDef(gradient: GradientConfig, id: string, svgSize: number): string {
   const stops = gradient.stops
     .map((s) => `<stop offset="${s.offset * 100}%" stop-color="${s.color}"/>`)
     .join('')
 
   if (gradient.type === 'radial') {
-    return `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="50%" cy="50%" r="50%">${stops}</radialGradient>`
+    const half = svgSize / 2
+    return `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${half}" cy="${half}" r="${half}">${stops}</radialGradient>`
   }
 
   const rotation = gradient.rotation ?? 0
   const rad = (rotation * Math.PI) / 180
-  const x1 = 50 - Math.cos(rad) * 50
-  const y1 = 50 - Math.sin(rad) * 50
-  const x2 = 50 + Math.cos(rad) * 50
-  const y2 = 50 + Math.sin(rad) * 50
+  const half = svgSize / 2
+  const x1 = half - Math.cos(rad) * half
+  const y1 = half - Math.sin(rad) * half
+  const x2 = half + Math.cos(rad) * half
+  const y2 = half + Math.sin(rad) * half
 
-  return `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%">${stops}</linearGradient>`
+  return `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops}</linearGradient>`
 }

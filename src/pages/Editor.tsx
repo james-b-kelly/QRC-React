@@ -10,8 +10,10 @@ import AdvancedSection from '../components/editor/AdvancedSection'
 import DownloadButton from '../components/editor/DownloadButton'
 import PresetsSection from '../components/editor/PresetsSection'
 
+const PREVIEW_URL = 'https://qr.example.com/preview'
+
 const DEFAULT_OPTIONS: QROptions = {
-  data: 'https://example.com',
+  data: PREVIEW_URL,
   dotStyle: 'rounded',
   cornerOptions: { squareStyle: 'rounded', dotStyle: 'dot' },
   foregroundColor: { type: 'solid', color: '#000000' },
@@ -24,88 +26,104 @@ const DEFAULT_OPTIONS: QROptions = {
 export default function Editor() {
   const [options, setOptions] = useState<QROptions>(DEFAULT_OPTIONS)
 
-  const qrResult = useMemo(() => generateQRCode(options), [options])
+  const qrResult = useMemo(() => generateQRCode({ ...options, data: PREVIEW_URL }), [options])
 
   const handleDataChange = useCallback((data: string) => {
     setOptions((prev) => ({ ...prev, data }))
   }, [])
-
   const handleDotStyleChange = useCallback((dotStyle: DotStyle) => {
     setOptions((prev) => ({ ...prev, dotStyle }))
   }, [])
-
   const handleCornerOptionsChange = useCallback((cornerOptions: CornerOptions) => {
     setOptions((prev) => ({ ...prev, cornerOptions }))
   }, [])
-
   const handleForegroundChange = useCallback((foregroundColor: ColorConfig) => {
     setOptions((prev) => ({ ...prev, foregroundColor }))
   }, [])
-
   const handleBackgroundChange = useCallback((backgroundColor: ColorConfig) => {
     setOptions((prev) => ({ ...prev, backgroundColor }))
   }, [])
-
   const handleLogoChange = useCallback((logo: LogoOptions | undefined) => {
     setOptions((prev) => ({ ...prev, logo }))
   }, [])
-
   const handleECLChange = useCallback((errorCorrectionLevel: ErrorCorrectionLevel) => {
     setOptions((prev) => ({ ...prev, errorCorrectionLevel }))
   }, [])
-
   const handleMarginChange = useCallback((margin: number) => {
     setOptions((prev) => ({ ...prev, margin }))
   }, [])
-
   const handleApplyPreset = useCallback((preset: Pick<QROptions, 'dotStyle' | 'cornerOptions' | 'foregroundColor' | 'backgroundColor'>) => {
     setOptions((prev) => ({ ...prev, ...preset }))
   }, [])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr,1fr] gap-8">
-        {/* Preview — sticky on mobile, right column on desktop */}
-        <div className="order-1 lg:order-2">
-          <div className="lg:sticky lg:top-6">
+    <div className="h-full flex flex-col lg:flex-row">
+
+      {/* ── Left: Controls Panel ─── scrolls independently ─── */}
+      <aside
+        aria-label="QR code editor controls"
+        className="w-full lg:w-[520px] xl:w-[560px] shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 bg-white overflow-y-auto"
+      >
+        {/* Presets strip */}
+        <div className="px-5 pt-4 pb-3 border-b border-slate-100">
+          <PresetsSection onApplyPreset={handleApplyPreset} />
+        </div>
+
+        {/* Control groups separated by dividers */}
+        <div className="px-5 py-4 space-y-1 divide-y divide-slate-100">
+          <div className="pb-4">
+            <ContentSection onDataChange={handleDataChange} />
+          </div>
+          <div className="py-4">
+            <StyleSection
+              dotStyle={options.dotStyle ?? 'rounded'}
+              cornerOptions={options.cornerOptions ?? {}}
+              onDotStyleChange={handleDotStyleChange}
+              onCornerOptionsChange={handleCornerOptionsChange}
+            />
+          </div>
+          <div className="py-4">
+            <ColorSection
+              foregroundColor={options.foregroundColor ?? { type: 'solid', color: '#000000' }}
+              backgroundColor={options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }}
+              onForegroundChange={handleForegroundChange}
+              onBackgroundChange={handleBackgroundChange}
+            />
+          </div>
+          <div className="py-4">
+            <LogoSection logo={options.logo} onLogoChange={handleLogoChange} />
+          </div>
+          <div className="pt-4 pb-2">
+            <AdvancedSection
+              errorCorrectionLevel={options.errorCorrectionLevel ?? 'M'}
+              margin={options.margin ?? 2}
+              hasLogo={!!options.logo}
+              onECLChange={handleECLChange}
+              onMarginChange={handleMarginChange}
+            />
+          </div>
+        </div>
+      </aside>
+
+      {/* ── Right: Preview Canvas ─── does NOT scroll ─── */}
+      <section
+        aria-label="QR code preview"
+        className="flex-1 bg-slate-50 flex flex-col overflow-hidden"
+      >
+        {/* Centered QR preview */}
+        <div className="flex-1 flex items-center justify-center p-8 lg:p-12 min-h-0">
+          <div className="w-full max-w-[360px]">
             <QRPreview svg={qrResult.svg} />
-            <div className="px-6 mt-4">
-              <DownloadButton qrResult={qrResult} />
-            </div>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="order-2 lg:order-1 space-y-4">
-          <PresetsSection onApplyPreset={handleApplyPreset} />
-
-          <ContentSection onDataChange={handleDataChange} />
-
-          <StyleSection
-            dotStyle={options.dotStyle ?? 'rounded'}
-            cornerOptions={options.cornerOptions ?? {}}
-            onDotStyleChange={handleDotStyleChange}
-            onCornerOptionsChange={handleCornerOptionsChange}
-          />
-
-          <ColorSection
-            foregroundColor={options.foregroundColor ?? { type: 'solid', color: '#000000' }}
-            backgroundColor={options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }}
-            onForegroundChange={handleForegroundChange}
-            onBackgroundChange={handleBackgroundChange}
-          />
-
-          <LogoSection logo={options.logo} onLogoChange={handleLogoChange} />
-
-          <AdvancedSection
-            errorCorrectionLevel={options.errorCorrectionLevel ?? 'M'}
-            margin={options.margin ?? 2}
-            hasLogo={!!options.logo}
-            onECLChange={handleECLChange}
-            onMarginChange={handleMarginChange}
-          />
+        {/* Download bar — pinned to bottom */}
+        <div className="shrink-0 border-t border-slate-200 bg-white px-6 py-3">
+          <div className="max-w-[360px] mx-auto">
+            <DownloadButton qrResult={qrResult} />
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   )
 }

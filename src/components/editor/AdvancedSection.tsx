@@ -19,19 +19,21 @@ interface AdvancedSectionProps {
 export default function AdvancedSection({ errorCorrectionLevel, margin, hasLogo, onECLChange, onMarginChange }: AdvancedSectionProps) {
   return (
     <SectionWrapper title="Advanced" defaultOpen={false}>
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
-          <p className="text-xs font-medium text-gray-500 mb-2">Error correction</p>
-          <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+          <p className="text-xs font-medium text-slate-500 mb-2.5">Error correction</p>
+          <div className="flex rounded-lg border border-slate-300 overflow-hidden" role="radiogroup" aria-label="Error correction level">
             {ECL_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 type="button"
+                role="radio"
+                aria-checked={errorCorrectionLevel === opt.value}
                 onClick={() => onECLChange(opt.value)}
-                className={`flex-1 py-2 text-center text-sm transition-colors ${
+                className={`flex-1 py-2.5 text-center text-sm font-medium transition-colors cursor-pointer ${
                   errorCorrectionLevel === opt.value
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                    ? 'bg-brand-500 text-white'
+                    : 'bg-white text-slate-600 hover:bg-slate-50'
                 }`}
                 title={opt.description}
               >
@@ -39,23 +41,25 @@ export default function AdvancedSection({ errorCorrectionLevel, margin, hasLogo,
               </button>
             ))}
           </div>
-          <p className="text-[10px] text-gray-400 mt-1">
+          <p className="text-[11px] text-slate-400 mt-1.5">
             {ECL_OPTIONS.find((o) => o.value === errorCorrectionLevel)?.description}
             {hasLogo && ' — auto-adjusted for logo'}
           </p>
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-gray-500 mb-1">
+          <label htmlFor="margin-slider" className="flex items-center justify-between text-xs font-medium text-slate-500 mb-1.5">
             <span>Margin (quiet zone)</span>
-            <span>{margin} modules</span>
+            <span className="font-mono">{margin}</span>
           </label>
           <input
+            id="margin-slider"
             type="range"
             min={0}
             max={6}
             value={margin}
             onChange={(e) => onMarginChange(Number(e.target.value))}
+            aria-valuetext={`${margin} modules`}
             className="w-full"
           />
         </div>

@@ -34,23 +34,29 @@ export default function DownloadButton({ qrResult }: DownloadButtonProps) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="flex items-center gap-3">
       <button
         type="button"
         onClick={downloadSVG}
-        className="w-full py-3 px-4 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-colors cursor-pointer"
+        className="flex-1 h-11 rounded-lg bg-cta text-white font-semibold text-sm shadow-md shadow-orange-500/20 hover:bg-cta-hover active:scale-[0.98] transition-all cursor-pointer"
       >
-        Download SVG
+        Download — $1.99
       </button>
       <button
         type="button"
         onClick={downloadPNG}
         disabled={downloading}
-        className="w-full py-2.5 px-4 rounded-xl border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer"
+        className="h-11 px-4 rounded-lg border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition-colors disabled:opacity-50 cursor-pointer"
       >
-        {downloading ? 'Generating PNG...' : 'Download PNG (1024px)'}
+        {downloading ? '...' : 'PNG'}
       </button>
-      <p className="text-[10px] text-center text-gray-400">Stripe payment coming soon — downloads are free for now</p>
+      <button
+        type="button"
+        onClick={downloadSVG}
+        className="h-11 px-4 rounded-lg border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition-colors cursor-pointer"
+      >
+        SVG
+      </button>
     </div>
   )
 }

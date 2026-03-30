@@ -8,11 +8,12 @@ interface SectionWrapperProps {
 
 export default function SectionWrapper({ title, children, defaultOpen = true }: SectionWrapperProps) {
   return (
-    <details open={defaultOpen} className="group border border-gray-200 rounded-lg">
-      <summary className="flex items-center justify-between cursor-pointer px-4 py-3 text-sm font-semibold text-gray-700 select-none">
+    <details open={defaultOpen} className="group">
+      <summary className="flex items-center justify-between cursor-pointer py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-widest select-none focus-visible:ring-2 focus-visible:ring-brand-500/50 focus-visible:outline-none rounded">
         {title}
         <svg
-          className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"
+          aria-hidden="true"
+          className="w-3.5 h-3.5 text-slate-300 transition-transform duration-200 group-open:rotate-180"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -21,7 +22,7 @@ export default function SectionWrapper({ title, children, defaultOpen = true }: 
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </summary>
-      <div className="px-4 pb-4 pt-1">
+      <div className="pt-2.5">
         {children}
       </div>
     </details>
