@@ -31,11 +31,13 @@ const CORNER_DOT_PREVIEWS = CORNER_DOT_STYLES.map((s) => ({ cornerOptions: { squ
 interface StyleSectionProps {
   dotStyle: DotStyle
   cornerOptions: CornerOptions
+  margin: number
   onDotStyleChange: (style: DotStyle) => void
   onCornerOptionsChange: (options: CornerOptions) => void
+  onMarginChange: (margin: number) => void
 }
 
-export default function StyleSection({ dotStyle, cornerOptions, onDotStyleChange, onCornerOptionsChange }: StyleSectionProps) {
+export default function StyleSection({ dotStyle, cornerOptions, margin, onDotStyleChange, onCornerOptionsChange, onMarginChange }: StyleSectionProps) {
   return (
     <SectionWrapper title="Style">
       <div className="space-y-5">
@@ -82,6 +84,23 @@ export default function StyleSection({ dotStyle, cornerOptions, onDotStyleChange
               />
             ))}
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="padding-slider" className="flex items-center justify-between text-xs font-medium text-slate-500 mb-1.5">
+            <span>Padding</span>
+            <span className="font-mono">{margin}</span>
+          </label>
+          <input
+            id="padding-slider"
+            type="range"
+            min={0}
+            max={6}
+            value={margin}
+            onChange={(e) => onMarginChange(Number(e.target.value))}
+            aria-valuetext={`${margin} modules`}
+            className="w-full"
+          />
         </div>
       </div>
     </SectionWrapper>

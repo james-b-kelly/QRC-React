@@ -59,16 +59,21 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
     bgRect = `<rect x="0" y="0" width="${size}" height="${size}" fill="${bgFill}"/>`
   }
 
-  // Logo: determine which modules to clear
+  // Logo: compute cleared area and image position together
   const logoClearSet = new Set<string>()
+  let logoImageModules = 0
+  let logoClearStart = 0
+  let logoClearSize = 0
   if (options.logo) {
     const logoRatio = Math.min(options.logo.sizeRatio ?? 0.25, 0.35)
     const logoPadding = options.logo.padding ?? 1
-    const logoModules = Math.ceil(matrix.size * logoRatio) + logoPadding * 2
-    const logoStart = Math.floor((matrix.size - logoModules) / 2)
-    const logoEnd = logoStart + logoModules
-    for (let r = logoStart; r < logoEnd; r++) {
-      for (let c = logoStart; c < logoEnd; c++) {
+    logoImageModules = Math.ceil(matrix.size * logoRatio)
+    logoClearSize = Math.min(logoImageModules + logoPadding * 2, Math.floor(matrix.size * 0.39))
+    // Centre the cleared area using round to split the remainder evenly
+    logoClearStart = Math.round((matrix.size - logoClearSize) / 2)
+    const logoEnd = logoClearStart + logoClearSize
+    for (let r = logoClearStart; r < logoEnd; r++) {
+      for (let c = logoClearStart; c < logoEnd; c++) {
         logoClearSet.add(`${r},${c}`)
       }
     }
@@ -108,15 +113,14 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
     cornerDotPaths.push(renderCornerDot(cornerDotStyle, dotX, dotY, innerDotSize))
   }
 
-  // Logo element — size matches the cleared module area (minus padding)
+  // Logo element — centred within the cleared area
   let logoElement = ''
   if (options.logo) {
-    const logoRatio = Math.min(options.logo.sizeRatio ?? 0.25, 0.35)
-    const logoPadding = options.logo.padding ?? 1
-    const logoModules = Math.ceil(matrix.size * logoRatio)
-    const logoSize = logoModules * moduleSize
-    const totalClearedModules = logoModules + logoPadding * 2
-    const logoX = margin * moduleSize + ((matrix.size - totalClearedModules) / 2 + logoPadding) * moduleSize
+    const logoSize = logoImageModules * moduleSize
+    // Centre the image within the cleared area
+    const clearPixelStart = (logoClearStart + margin) * moduleSize
+    const clearPixelSize = logoClearSize * moduleSize
+    const logoX = clearPixelStart + (clearPixelSize - logoSize) / 2
     const logoY = logoX
     logoElement = `<image href="${options.logo.src}" x="${logoX}" y="${logoY}" width="${logoSize}" height="${logoSize}" preserveAspectRatio="xMidYMid slice"/>`
   }

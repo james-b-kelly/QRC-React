@@ -44,7 +44,13 @@ export default function Editor() {
     setOptions((prev) => ({ ...prev, backgroundColor }))
   }, [])
   const handleLogoChange = useCallback((logo: LogoOptions | undefined) => {
-    setOptions((prev) => ({ ...prev, logo }))
+    setOptions((prev) => {
+      const next = { ...prev, logo }
+      if (logo && (prev.errorCorrectionLevel === 'L' || prev.errorCorrectionLevel === 'M')) {
+        next.errorCorrectionLevel = 'Q'
+      }
+      return next
+    })
   }, [])
   const handleECLChange = useCallback((errorCorrectionLevel: ErrorCorrectionLevel) => {
     setOptions((prev) => ({ ...prev, errorCorrectionLevel }))
@@ -78,8 +84,10 @@ export default function Editor() {
             <StyleSection
               dotStyle={options.dotStyle ?? 'rounded'}
               cornerOptions={options.cornerOptions ?? {}}
+              margin={options.margin ?? 2}
               onDotStyleChange={handleDotStyleChange}
               onCornerOptionsChange={handleCornerOptionsChange}
+              onMarginChange={handleMarginChange}
             />
           </div>
           <div className="py-4">
@@ -96,10 +104,8 @@ export default function Editor() {
           <div className="pt-4 pb-2">
             <AdvancedSection
               errorCorrectionLevel={options.errorCorrectionLevel ?? 'M'}
-              margin={options.margin ?? 2}
               hasLogo={!!options.logo}
               onECLChange={handleECLChange}
-              onMarginChange={handleMarginChange}
             />
           </div>
         </div>
