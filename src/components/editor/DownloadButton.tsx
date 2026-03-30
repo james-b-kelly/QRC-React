@@ -1,62 +1,63 @@
 import { useState } from 'react'
-import type { QRResult } from '../../lib/qr-engine'
+import type { QROptions } from '../../lib/qr-engine'
+
+const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.qrstudio.store'
 
 interface DownloadButtonProps {
-  qrResult: QRResult
+  options: QROptions
 }
 
-export default function DownloadButton({ qrResult }: DownloadButtonProps) {
-  const [downloading, setDownloading] = useState(false)
+export default function DownloadButton({ options }: DownloadButtonProps) {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string>()
 
-  function downloadSVG() {
-    const blob = new Blob([qrResult.svg], { type: 'image/svg+xml' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'qr-code.svg'
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+  async function handleCheckout() {
+    setLoading(true)
+    setError(undefined)
 
-  async function downloadPNG() {
-    setDownloading(true)
     try {
-      const blob = await qrResult.toPNG(1024)
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'qr-code.png'
-      a.click()
-      URL.revokeObjectURL(url)
-    } finally {
-      setDownloading(false)
+      // Save QR options to sessionStorage for retrieval after redirect
+      sessionStorage.setItem('qr_options', JSON.stringify(options))
+
+      const res = await fetch(`${CHECKOUT_API}/api/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${window.location.origin}/editor`,
+        }),
+      })
+
+      if (!res.ok) throw new Error('Failed to create checkout session')
+
+      const { url } = await res.json()
+      if (url) {
+        window.location.href = url
+      } else {
+        throw new Error('No checkout URL returned')
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+      setLoading(false)
     }
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="space-y-2">
       <button
         type="button"
-        onClick={downloadSVG}
-        className="flex-1 h-11 rounded-lg bg-cta text-white font-semibold text-sm shadow-md shadow-orange-500/20 hover:bg-cta-hover active:scale-[0.98] transition-all cursor-pointer"
+        onClick={handleCheckout}
+        disabled={loading}
+        className="w-full h-12 rounded-lg bg-cta text-white font-semibold text-sm shadow-md shadow-orange-500/20 hover:bg-cta-hover active:scale-[0.98] transition-all cursor-pointer disabled:opacity-70 disabled:cursor-wait"
       >
-        Download — $1.99
+        {loading ? 'Redirecting to checkout...' : 'Download — $1.99'}
       </button>
-      <button
-        type="button"
-        onClick={downloadPNG}
-        disabled={downloading}
-        className="h-11 px-4 rounded-lg border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition-colors disabled:opacity-50 cursor-pointer"
-      >
-        {downloading ? '...' : 'PNG'}
-      </button>
-      <button
-        type="button"
-        onClick={downloadSVG}
-        className="h-11 px-4 rounded-lg border border-slate-200 text-slate-500 text-xs font-medium hover:bg-slate-50 transition-colors cursor-pointer"
-      >
-        SVG
-      </button>
+      {error && (
+        <p className="text-xs text-red-600 text-center" role="alert">{error}</p>
+      )}
+      <p className="text-[11px] text-slate-400 text-center">
+        SVG + PNG included. One-time payment.
+      </p>
     </div>
   )
 }
