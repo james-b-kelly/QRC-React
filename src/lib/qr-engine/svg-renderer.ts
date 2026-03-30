@@ -35,18 +35,19 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
   }
 
   const defs: string[] = []
+  const uid = Math.random().toString(36).slice(2, 8)
   let gradientId = 0
 
   // Build foreground color/gradient
   const fgColor = options.foregroundColor ?? { type: 'solid', color: '#000000' }
-  const fgFill = resolveColor(fgColor, `fg-grad-${gradientId++}`, defs)
+  const fgFill = resolveColor(fgColor, `fg-${uid}-${gradientId++}`, defs, size)
 
   // Build corner colors
   const cornerOpts = options.cornerOptions ?? {}
   const cornerSquareColor = cornerOpts.squareColor ?? fgColor
   const cornerDotColor = cornerOpts.dotColor ?? fgColor
-  const cornerSquareFill = resolveColor(cornerSquareColor, `cs-grad-${gradientId++}`, defs)
-  const cornerDotFill = resolveColor(cornerDotColor, `cd-grad-${gradientId++}`, defs)
+  const cornerSquareFill = resolveColor(cornerSquareColor, `cs-${uid}-${gradientId++}`, defs, size)
+  const cornerDotFill = resolveColor(cornerDotColor, `cd-${uid}-${gradientId++}`, defs, size)
 
   // Background
   const bgColor = options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }
@@ -54,20 +55,25 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
   if (bgColor.type === 'solid' && bgColor.color === 'transparent') {
     // No background
   } else {
-    const bgFill = resolveColor(bgColor, `bg-grad-${gradientId++}`, defs)
+    const bgFill = resolveColor(bgColor, `bg-${uid}-${gradientId++}`, defs, size)
     bgRect = `<rect x="0" y="0" width="${size}" height="${size}" fill="${bgFill}"/>`
   }
 
-  // Logo: determine which modules to clear
+  // Logo: compute cleared area and image position together
   const logoClearSet = new Set<string>()
+  let logoImageModules = 0
+  let logoClearStart = 0
+  let logoClearSize = 0
   if (options.logo) {
     const logoRatio = Math.min(options.logo.sizeRatio ?? 0.25, 0.35)
     const logoPadding = options.logo.padding ?? 1
-    const logoModules = Math.ceil(matrix.size * logoRatio) + logoPadding * 2
-    const logoStart = Math.floor((matrix.size - logoModules) / 2)
-    const logoEnd = logoStart + logoModules
-    for (let r = logoStart; r < logoEnd; r++) {
-      for (let c = logoStart; c < logoEnd; c++) {
+    logoImageModules = Math.ceil(matrix.size * logoRatio)
+    logoClearSize = Math.min(logoImageModules + logoPadding * 2, Math.floor(matrix.size * 0.39))
+    // Centre the cleared area using round to split the remainder evenly
+    logoClearStart = Math.round((matrix.size - logoClearSize) / 2)
+    const logoEnd = logoClearStart + logoClearSize
+    for (let r = logoClearStart; r < logoEnd; r++) {
+      for (let c = logoClearStart; c < logoEnd; c++) {
         logoClearSet.add(`${r},${c}`)
       }
     }
@@ -107,15 +113,14 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
     cornerDotPaths.push(renderCornerDot(cornerDotStyle, dotX, dotY, innerDotSize))
   }
 
-  // Logo element — size matches the cleared module area (minus padding)
+  // Logo element — centred within the cleared area
   let logoElement = ''
   if (options.logo) {
-    const logoRatio = Math.min(options.logo.sizeRatio ?? 0.25, 0.35)
-    const logoPadding = options.logo.padding ?? 1
-    const logoModules = Math.ceil(matrix.size * logoRatio)
-    const logoSize = logoModules * moduleSize
-    const totalClearedModules = logoModules + logoPadding * 2
-    const logoX = margin * moduleSize + ((matrix.size - totalClearedModules) / 2 + logoPadding) * moduleSize
+    const logoSize = logoImageModules * moduleSize
+    // Centre the image within the cleared area
+    const clearPixelStart = (logoClearStart + margin) * moduleSize
+    const clearPixelSize = logoClearSize * moduleSize
+    const logoX = clearPixelStart + (clearPixelSize - logoSize) / 2
     const logoY = logoX
     logoElement = `<image href="${options.logo.src}" x="${logoX}" y="${logoY}" width="${logoSize}" height="${logoSize}" preserveAspectRatio="xMidYMid slice"/>`
   }
@@ -141,34 +146,37 @@ function resolveColor(
   config: ColorConfig,
   gradientId: string,
   defs: string[],
+  svgSize: number,
 ): string {
   if (config.type === 'solid') {
     return config.color ?? '#000000'
   }
 
   if (config.gradient) {
-    defs.push(renderGradientDef(config.gradient, gradientId))
+    defs.push(renderGradientDef(config.gradient, gradientId, svgSize))
     return `url(#${gradientId})`
   }
 
   return '#000000'
 }
 
-function renderGradientDef(gradient: GradientConfig, id: string): string {
+function renderGradientDef(gradient: GradientConfig, id: string, svgSize: number): string {
   const stops = gradient.stops
     .map((s) => `<stop offset="${s.offset * 100}%" stop-color="${s.color}"/>`)
     .join('')
 
   if (gradient.type === 'radial') {
-    return `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="50%" cy="50%" r="50%">${stops}</radialGradient>`
+    const half = svgSize / 2
+    return `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${half}" cy="${half}" r="${half}">${stops}</radialGradient>`
   }
 
   const rotation = gradient.rotation ?? 0
   const rad = (rotation * Math.PI) / 180
-  const x1 = 50 - Math.cos(rad) * 50
-  const y1 = 50 - Math.sin(rad) * 50
-  const x2 = 50 + Math.cos(rad) * 50
-  const y2 = 50 + Math.sin(rad) * 50
+  const half = svgSize / 2
+  const x1 = half - Math.cos(rad) * half
+  const y1 = half - Math.sin(rad) * half
+  const x2 = half + Math.cos(rad) * half
+  const y2 = half + Math.sin(rad) * half
 
-  return `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%">${stops}</linearGradient>`
+  return `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops}</linearGradient>`
 }

@@ -47,15 +47,17 @@ export default function ContentSection({ onDataChange }: ContentSectionProps) {
     return () => clearTimeout(debounceRef.current)
   }, [dataType, urlValue, textValue, phoneValue, wifiFields, vcardFields, emailFields, smsFields, onDataChange])
 
-  const inputClass = 'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
-  const labelClass = 'block text-xs font-medium text-gray-500 mb-1'
+  const inputClass = 'w-full h-10 rounded-lg border border-slate-300 px-3 text-sm text-slate-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-colors'
+  const textareaClass = 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-colors'
+  const labelClass = 'block text-xs font-medium text-slate-500 mb-1.5'
 
   return (
     <SectionWrapper title="Content">
       <div className="space-y-3">
         <div>
-          <label className={labelClass}>Data type</label>
+          <label htmlFor="data-type" className={labelClass}>Data type</label>
           <select
+            id="data-type"
             value={dataType}
             onChange={(e) => setDataType(e.target.value as DataType)}
             className={inputClass}
@@ -68,109 +70,109 @@ export default function ContentSection({ onDataChange }: ContentSectionProps) {
 
         {dataType === 'url' && (
           <div>
-            <label className={labelClass}>URL</label>
-            <input type="url" value={urlValue} onChange={(e) => setUrlValue(e.target.value)} className={inputClass} placeholder="https://example.com" />
+            <label htmlFor="url-input" className={labelClass}>URL</label>
+            <input id="url-input" type="url" value={urlValue} onChange={(e) => setUrlValue(e.target.value)} className={inputClass} placeholder="https://example.com" />
           </div>
         )}
 
         {dataType === 'text' && (
           <div>
-            <label className={labelClass}>Text</label>
-            <textarea value={textValue} onChange={(e) => setTextValue(e.target.value)} className={inputClass} rows={3} placeholder="Enter text..." />
+            <label htmlFor="text-input" className={labelClass}>Text</label>
+            <textarea id="text-input" value={textValue} onChange={(e) => setTextValue(e.target.value)} className={textareaClass} rows={3} placeholder="Enter text..." />
           </div>
         )}
 
         {dataType === 'phone' && (
           <div>
-            <label className={labelClass}>Phone number</label>
-            <input type="tel" value={phoneValue} onChange={(e) => setPhoneValue(e.target.value)} className={inputClass} placeholder="+44 7700 900000" />
+            <label htmlFor="phone-input" className={labelClass}>Phone number</label>
+            <input id="phone-input" type="tel" value={phoneValue} onChange={(e) => setPhoneValue(e.target.value)} className={inputClass} placeholder="+44 7700 900000" />
           </div>
         )}
 
         {dataType === 'wifi' && (
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div>
-              <label className={labelClass}>Network name (SSID)</label>
-              <input value={wifiFields.ssid} onChange={(e) => setWifiFields({ ...wifiFields, ssid: e.target.value })} className={inputClass} />
+              <label htmlFor="wifi-ssid" className={labelClass}>Network name (SSID)</label>
+              <input id="wifi-ssid" value={wifiFields.ssid} onChange={(e) => setWifiFields({ ...wifiFields, ssid: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Password</label>
-              <input type="password" value={wifiFields.password ?? ''} onChange={(e) => setWifiFields({ ...wifiFields, password: e.target.value })} className={inputClass} />
+              <label htmlFor="wifi-password" className={labelClass}>Password</label>
+              <input id="wifi-password" type="password" value={wifiFields.password ?? ''} onChange={(e) => setWifiFields({ ...wifiFields, password: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Encryption</label>
-              <select value={wifiFields.encryption} onChange={(e) => setWifiFields({ ...wifiFields, encryption: e.target.value as WiFiFields['encryption'] })} className={inputClass}>
+              <label htmlFor="wifi-encryption" className={labelClass}>Encryption</label>
+              <select id="wifi-encryption" value={wifiFields.encryption} onChange={(e) => setWifiFields({ ...wifiFields, encryption: e.target.value as WiFiFields['encryption'] })} className={inputClass}>
                 <option value="WPA">WPA/WPA2</option>
                 <option value="WEP">WEP</option>
                 <option value="nopass">None</option>
               </select>
             </div>
-            <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input type="checkbox" checked={wifiFields.hidden ?? false} onChange={(e) => setWifiFields({ ...wifiFields, hidden: e.target.checked })} className="rounded" />
+            <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+              <input type="checkbox" checked={wifiFields.hidden ?? false} onChange={(e) => setWifiFields({ ...wifiFields, hidden: e.target.checked })} className="rounded border-slate-300" />
               Hidden network
             </label>
           </div>
         )}
 
         {dataType === 'vcard' && (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             <div>
-              <label className={labelClass}>First name</label>
-              <input value={vcardFields.firstName} onChange={(e) => setVcardFields({ ...vcardFields, firstName: e.target.value })} className={inputClass} />
+              <label htmlFor="vcard-first" className={labelClass}>First name</label>
+              <input id="vcard-first" value={vcardFields.firstName} onChange={(e) => setVcardFields({ ...vcardFields, firstName: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Last name</label>
-              <input value={vcardFields.lastName ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, lastName: e.target.value })} className={inputClass} />
+              <label htmlFor="vcard-last" className={labelClass}>Last name</label>
+              <input id="vcard-last" value={vcardFields.lastName ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, lastName: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Phone</label>
-              <input value={vcardFields.phone ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, phone: e.target.value })} className={inputClass} />
+              <label htmlFor="vcard-phone" className={labelClass}>Phone</label>
+              <input id="vcard-phone" type="tel" value={vcardFields.phone ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, phone: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Email</label>
-              <input value={vcardFields.email ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, email: e.target.value })} className={inputClass} />
+              <label htmlFor="vcard-email" className={labelClass}>Email</label>
+              <input id="vcard-email" type="email" value={vcardFields.email ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, email: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Organisation</label>
-              <input value={vcardFields.organization ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, organization: e.target.value })} className={inputClass} />
+              <label htmlFor="vcard-org" className={labelClass}>Organisation</label>
+              <input id="vcard-org" value={vcardFields.organization ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, organization: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Title</label>
-              <input value={vcardFields.title ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, title: e.target.value })} className={inputClass} />
+              <label htmlFor="vcard-title" className={labelClass}>Title</label>
+              <input id="vcard-title" value={vcardFields.title ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, title: e.target.value })} className={inputClass} />
             </div>
             <div className="col-span-2">
-              <label className={labelClass}>Website</label>
-              <input value={vcardFields.url ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, url: e.target.value })} className={inputClass} />
+              <label htmlFor="vcard-url" className={labelClass}>Website</label>
+              <input id="vcard-url" type="url" value={vcardFields.url ?? ''} onChange={(e) => setVcardFields({ ...vcardFields, url: e.target.value })} className={inputClass} />
             </div>
           </div>
         )}
 
         {dataType === 'email' && (
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div>
-              <label className={labelClass}>Email address</label>
-              <input type="email" value={emailFields.address} onChange={(e) => setEmailFields({ ...emailFields, address: e.target.value })} className={inputClass} />
+              <label htmlFor="email-address" className={labelClass}>Email address</label>
+              <input id="email-address" type="email" value={emailFields.address} onChange={(e) => setEmailFields({ ...emailFields, address: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Subject</label>
-              <input value={emailFields.subject ?? ''} onChange={(e) => setEmailFields({ ...emailFields, subject: e.target.value })} className={inputClass} />
+              <label htmlFor="email-subject" className={labelClass}>Subject</label>
+              <input id="email-subject" value={emailFields.subject ?? ''} onChange={(e) => setEmailFields({ ...emailFields, subject: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Body</label>
-              <textarea value={emailFields.body ?? ''} onChange={(e) => setEmailFields({ ...emailFields, body: e.target.value })} className={inputClass} rows={2} />
+              <label htmlFor="email-body" className={labelClass}>Body</label>
+              <textarea id="email-body" value={emailFields.body ?? ''} onChange={(e) => setEmailFields({ ...emailFields, body: e.target.value })} className={textareaClass} rows={2} />
             </div>
           </div>
         )}
 
         {dataType === 'sms' && (
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div>
-              <label className={labelClass}>Phone number</label>
-              <input type="tel" value={smsFields.number} onChange={(e) => setSmsFields({ ...smsFields, number: e.target.value })} className={inputClass} />
+              <label htmlFor="sms-number" className={labelClass}>Phone number</label>
+              <input id="sms-number" type="tel" value={smsFields.number} onChange={(e) => setSmsFields({ ...smsFields, number: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Message</label>
-              <textarea value={smsFields.body ?? ''} onChange={(e) => setSmsFields({ ...smsFields, body: e.target.value })} className={inputClass} rows={2} />
+              <label htmlFor="sms-body" className={labelClass}>Message</label>
+              <textarea id="sms-body" value={smsFields.body ?? ''} onChange={(e) => setSmsFields({ ...smsFields, body: e.target.value })} className={textareaClass} rows={2} />
             </div>
           </div>
         )}

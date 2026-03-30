@@ -12,18 +12,22 @@ export default function GradientPicker({ gradient, onChange }: GradientPickerPro
 
   return (
     <div className="space-y-3">
-      <div className="flex gap-2">
+      <div className="flex gap-1.5" role="radiogroup" aria-label="Gradient type">
         <button
           type="button"
+          role="radio"
+          aria-checked={gradient.type === 'linear'}
           onClick={() => onChange({ ...gradient, type: 'linear' })}
-          className={`px-3 py-1 text-xs rounded-full border ${gradient.type === 'linear' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-gray-300 text-gray-600'}`}
+          className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer ${gradient.type === 'linear' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-300 text-slate-600 hover:border-slate-400'}`}
         >
           Linear
         </button>
         <button
           type="button"
+          role="radio"
+          aria-checked={gradient.type === 'radial'}
           onClick={() => onChange({ ...gradient, type: 'radial' })}
-          className={`px-3 py-1 text-xs rounded-full border ${gradient.type === 'radial' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-gray-300 text-gray-600'}`}
+          className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer ${gradient.type === 'radial' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-300 text-slate-600 hover:border-slate-400'}`}
         >
           Radial
         </button>
@@ -42,22 +46,25 @@ export default function GradientPicker({ gradient, onChange }: GradientPickerPro
 
       {gradient.type === 'linear' && (
         <div>
-          <label className="flex items-center gap-2 text-xs text-gray-500">
-            Angle: {gradient.rotation ?? 0}&deg;
-            <input
-              type="range"
-              min={0}
-              max={360}
-              value={gradient.rotation ?? 0}
-              onChange={(e) => onChange({ ...gradient, rotation: Number(e.target.value) })}
-              className="flex-1"
-            />
+          <label className="flex items-center justify-between text-xs text-slate-500 mb-1">
+            <span>Angle</span>
+            <span className="font-mono">{gradient.rotation ?? 0}&deg;</span>
           </label>
+          <input
+            type="range"
+            min={0}
+            max={360}
+            value={gradient.rotation ?? 0}
+            onChange={(e) => onChange({ ...gradient, rotation: Number(e.target.value) })}
+            aria-label="Gradient angle"
+            className="w-full"
+          />
         </div>
       )}
 
       <div
-        className="h-6 rounded-md border border-gray-200"
+        aria-hidden="true"
+        className="h-7 rounded-lg border border-slate-200"
         style={{
           background: gradient.type === 'linear'
             ? `linear-gradient(${gradient.rotation ?? 0}deg, ${startColor}, ${endColor})`

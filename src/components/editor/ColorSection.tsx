@@ -13,7 +13,7 @@ interface ColorSectionProps {
 
 const DEFAULT_GRADIENT: GradientConfig = {
   type: 'linear',
-  stops: [{ offset: 0, color: '#000000' }, { offset: 1, color: '#4f46e5' }],
+  stops: [{ offset: 0, color: '#000000' }, { offset: 1, color: '#2563eb' }],
   rotation: 45,
 }
 
@@ -45,22 +45,26 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
 
   return (
     <SectionWrapper title="Colours">
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-medium text-gray-500">Foreground</p>
-            <div className="flex gap-1">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-medium text-slate-500">Foreground</p>
+            <div className="flex gap-1" role="radiogroup" aria-label="Foreground colour mode">
               <button
                 type="button"
+                role="radio"
+                aria-checked={fgMode === 'solid'}
                 onClick={() => toggleFgMode('solid')}
-                className={`px-2 py-0.5 text-[10px] rounded-full border ${fgMode === 'solid' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-gray-300 text-gray-500'}`}
+                className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-colors cursor-pointer ${fgMode === 'solid' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-300 text-slate-500 hover:border-slate-400'}`}
               >
                 Solid
               </button>
               <button
                 type="button"
+                role="radio"
+                aria-checked={fgMode === 'gradient'}
                 onClick={() => toggleFgMode('gradient')}
-                className={`px-2 py-0.5 text-[10px] rounded-full border ${fgMode === 'gradient' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-gray-300 text-gray-500'}`}
+                className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-colors cursor-pointer ${fgMode === 'gradient' ? 'bg-brand-50 border-brand-500 text-brand-700' : 'border-slate-300 text-slate-500 hover:border-slate-400'}`}
               >
                 Gradient
               </button>
@@ -78,9 +82,9 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-medium text-gray-500">Background</p>
-            <label className="flex items-center gap-1.5 text-[10px] text-gray-500">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-medium text-slate-500">Background</p>
+            <label className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isTransparent}
@@ -91,7 +95,7 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
                       : { type: 'solid', color: '#FFFFFF' }
                   )
                 }}
-                className="rounded"
+                className="rounded border-slate-300"
               />
               Transparent
             </label>

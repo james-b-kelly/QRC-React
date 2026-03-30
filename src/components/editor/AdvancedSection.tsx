@@ -2,63 +2,55 @@ import type { ErrorCorrectionLevel } from '../../lib/qr-engine'
 import SectionWrapper from './SectionWrapper'
 
 const ECL_OPTIONS: { value: ErrorCorrectionLevel; label: string; description: string }[] = [
-  { value: 'L', label: 'L', description: '7% recovery' },
-  { value: 'M', label: 'M', description: '15% recovery' },
-  { value: 'Q', label: 'Q', description: '25% recovery' },
-  { value: 'H', label: 'H', description: '30% recovery' },
+  { value: 'L', label: 'Low', description: 'Smallest QR, least damage tolerance' },
+  { value: 'M', label: 'Medium', description: 'Good balance of size and resilience' },
+  { value: 'Q', label: 'High', description: 'Tolerates moderate damage or obstruction' },
+  { value: 'H', label: 'Max', description: 'Best for logos — survives up to 30% damage' },
 ]
 
 interface AdvancedSectionProps {
   errorCorrectionLevel: ErrorCorrectionLevel
-  margin: number
   hasLogo: boolean
   onECLChange: (ecl: ErrorCorrectionLevel) => void
-  onMarginChange: (margin: number) => void
 }
 
-export default function AdvancedSection({ errorCorrectionLevel, margin, hasLogo, onECLChange, onMarginChange }: AdvancedSectionProps) {
+export default function AdvancedSection({ errorCorrectionLevel, hasLogo, onECLChange }: AdvancedSectionProps) {
   return (
     <SectionWrapper title="Advanced" defaultOpen={false}>
-      <div className="space-y-4">
-        <div>
-          <p className="text-xs font-medium text-gray-500 mb-2">Error correction</p>
-          <div className="flex rounded-lg border border-gray-300 overflow-hidden">
-            {ECL_OPTIONS.map((opt) => (
+      <div>
+        <p className="text-xs font-medium text-slate-500 mb-1">Error correction</p>
+        <p className="text-[11px] text-slate-400 mb-2.5">
+          Higher levels make the QR more resilient to damage or obstruction, but increase its size.
+        </p>
+        <div className="flex rounded-lg border border-slate-300 overflow-hidden" role="radiogroup" aria-label="Error correction level">
+          {ECL_OPTIONS.map((opt) => {
+            const disabled = hasLogo && (opt.value === 'L' || opt.value === 'M')
+            return (
               <button
                 key={opt.value}
                 type="button"
-                onClick={() => onECLChange(opt.value)}
-                className={`flex-1 py-2 text-center text-sm transition-colors ${
-                  errorCorrectionLevel === opt.value
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                role="radio"
+                aria-checked={errorCorrectionLevel === opt.value}
+                aria-disabled={disabled}
+                onClick={() => !disabled && onECLChange(opt.value)}
+                className={`flex-1 py-2.5 text-center text-xs font-medium transition-colors ${
+                  disabled
+                    ? 'bg-slate-50 text-slate-300 cursor-not-allowed'
+                    : errorCorrectionLevel === opt.value
+                      ? 'bg-brand-500 text-white cursor-pointer'
+                      : 'bg-white text-slate-600 hover:bg-slate-50 cursor-pointer'
                 }`}
-                title={opt.description}
+                title={disabled ? 'Requires higher correction for logo' : opt.description}
               >
                 {opt.label}
               </button>
-            ))}
-          </div>
-          <p className="text-[10px] text-gray-400 mt-1">
-            {ECL_OPTIONS.find((o) => o.value === errorCorrectionLevel)?.description}
-            {hasLogo && ' — auto-adjusted for logo'}
-          </p>
+            )
+          })}
         </div>
-
-        <div>
-          <label className="flex items-center justify-between text-xs text-gray-500 mb-1">
-            <span>Margin (quiet zone)</span>
-            <span>{margin} modules</span>
-          </label>
-          <input
-            type="range"
-            min={0}
-            max={6}
-            value={margin}
-            onChange={(e) => onMarginChange(Number(e.target.value))}
-            className="w-full"
-          />
-        </div>
+        <p className="text-[11px] text-slate-400 mt-1.5">
+          {ECL_OPTIONS.find((o) => o.value === errorCorrectionLevel)?.description}
+          {hasLogo && ' — L and M disabled when a logo is present'}
+        </p>
       </div>
     </SectionWrapper>
   )
