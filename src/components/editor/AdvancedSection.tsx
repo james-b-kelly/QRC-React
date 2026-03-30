@@ -33,7 +33,7 @@ export default function AdvancedSection({ errorCorrectionLevel, hasLogo, onECLCh
                 aria-checked={errorCorrectionLevel === opt.value}
                 aria-disabled={disabled}
                 onClick={() => !disabled && onECLChange(opt.value)}
-                className={`flex-1 py-2.5 text-center text-xs font-medium transition-colors ${
+                className={`flex-1 min-h-[44px] py-2.5 text-center text-xs font-medium transition-colors ${
                   disabled
                     ? 'bg-slate-50 text-slate-300 cursor-not-allowed'
                     : errorCorrectionLevel === opt.value

@@ -106,7 +106,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/editor"
-                className="rounded-xl bg-cta px-8 py-4 text-base font-semibold text-white shadow-lg shadow-orange-500/25 hover:bg-cta-hover transition-colors cursor-pointer"
+                className="w-full sm:w-auto rounded-xl bg-cta px-8 py-4 text-base font-semibold text-white text-center shadow-lg shadow-orange-500/25 hover:bg-cta-hover transition-colors cursor-pointer"
               >
                 Start Designing — It's Free to Try
               </Link>
@@ -161,7 +161,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link
               to="/editor"
-              className="inline-block rounded-xl bg-slate-900 px-8 py-3.5 text-sm font-semibold text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              className="block sm:inline-block rounded-xl bg-slate-900 px-8 py-3.5 text-sm font-semibold text-white text-center hover:bg-slate-800 transition-colors cursor-pointer"
             >
               Try the Editor
             </Link>
@@ -239,7 +239,7 @@ export default function Home() {
           <div className="text-center mt-10">
             <Link
               to="/editor"
-              className="inline-block rounded-xl bg-cta px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/25 hover:bg-cta-hover transition-colors cursor-pointer"
+              className="block sm:inline-block rounded-xl bg-cta px-8 py-3.5 text-sm font-semibold text-white text-center shadow-lg shadow-orange-500/25 hover:bg-cta-hover transition-colors cursor-pointer"
             >
               Create Your QR Code — $1.99
             </Link>
@@ -291,7 +291,7 @@ export default function Home() {
           </p>
           <Link
             to="/editor"
-            className="inline-block rounded-xl bg-cta px-10 py-4 text-base font-semibold text-white shadow-lg shadow-orange-500/25 hover:bg-cta-hover transition-colors cursor-pointer"
+            className="block sm:inline-block rounded-xl bg-cta px-10 py-4 text-base font-semibold text-white text-center shadow-lg shadow-orange-500/25 hover:bg-cta-hover transition-colors cursor-pointer"
           >
             Start Designing Now
           </Link>

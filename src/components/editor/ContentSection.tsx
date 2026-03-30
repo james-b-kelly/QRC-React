@@ -107,8 +107,8 @@ export default function ContentSection({ onDataChange }: ContentSectionProps) {
                 <option value="nopass">None</option>
               </select>
             </div>
-            <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
-              <input type="checkbox" checked={wifiFields.hidden ?? false} onChange={(e) => setWifiFields({ ...wifiFields, hidden: e.target.checked })} className="rounded border-slate-300" />
+            <label className="flex items-center gap-2 min-h-[44px] text-sm text-slate-600 cursor-pointer">
+              <input type="checkbox" checked={wifiFields.hidden ?? false} onChange={(e) => setWifiFields({ ...wifiFields, hidden: e.target.checked })} className="w-5 h-5 rounded border-slate-300" />
               Hidden network
             </label>
           </div>

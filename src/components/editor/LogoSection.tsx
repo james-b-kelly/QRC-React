@@ -53,7 +53,10 @@ export default function LogoSection({ logo, onLogoChange }: LogoSectionProps) {
               }`}
             >
               <div>
-                <p className="text-sm text-slate-500">Drop an image here or click to browse</p>
+                <p className="text-sm text-slate-500">
+                  <span className="hidden sm:inline">Drop an image here or click to browse</span>
+                  <span className="sm:hidden">Tap to upload an image</span>
+                </p>
                 <p className="text-[11px] text-slate-400 mt-1">PNG, JPG, SVG — max 2MB</p>
                 {error && <p className="text-xs text-red-600 mt-2" role="alert">{error}</p>}
               </div>

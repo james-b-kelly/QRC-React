@@ -109,9 +109,9 @@ export default function PresetsSection({ onApplyPreset }: PresetsSectionProps) {
             key={preset.name}
             type="button"
             onClick={() => onApplyPreset(preset)}
-            className="flex flex-col items-center gap-1 py-2.5 px-1 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors duration-150 cursor-pointer"
+            className="flex flex-col items-center gap-1.5 py-3 px-1 rounded-lg bg-slate-50 hover:bg-slate-100 active:bg-slate-200 transition-colors duration-150 cursor-pointer"
           >
-            <div aria-hidden="true" className="w-11 h-11 [&>svg]:w-full [&>svg]:h-full" dangerouslySetInnerHTML={{ __html: previewSvgs[i] }} />
+            <div aria-hidden="true" className="w-12 h-12 [&>svg]:w-full [&>svg]:h-full" dangerouslySetInnerHTML={{ __html: previewSvgs[i] }} />
             <span className="text-[10px] font-medium text-slate-500">{preset.name}</span>
           </button>
         ))}

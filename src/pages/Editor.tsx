@@ -63,12 +63,19 @@ export default function Editor() {
   }, [])
 
   return (
-    <div className="h-full flex flex-col lg:flex-row">
+    <div className="h-full flex flex-col md:flex-row">
 
-      {/* ── Left: Controls Panel ─── scrolls independently ─── */}
+      {/* ── Mobile: Compact Preview (sticky top) ─── */}
+      <div className="shrink-0 md:hidden bg-slate-50 border-b border-slate-200 p-3">
+        <div className="max-w-[160px] mx-auto">
+          <QRPreview svg={qrResult.svg} />
+        </div>
+      </div>
+
+      {/* ── Controls Panel ─── scrolls independently ─── */}
       <aside
         aria-label="QR code editor controls"
-        className="w-full lg:w-[520px] xl:w-[560px] shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 bg-white overflow-y-auto"
+        className="min-h-0 flex-1 md:flex-none md:w-[360px] lg:w-[520px] xl:w-[560px] shrink-0 md:border-r border-slate-200 bg-white overflow-y-auto"
       >
         {/* Presets strip */}
         <div className="px-5 pt-4 pb-3 border-b border-slate-100">
@@ -111,10 +118,10 @@ export default function Editor() {
         </div>
       </aside>
 
-      {/* ── Right: Preview Canvas ─── does NOT scroll ─── */}
+      {/* ── Desktop/Tablet: Preview Canvas ─── does NOT scroll ─── */}
       <section
         aria-label="QR code preview"
-        className="flex-1 bg-slate-50 flex flex-col overflow-hidden"
+        className="hidden md:flex flex-1 bg-slate-50 flex-col overflow-hidden"
       >
         {/* Centered QR preview */}
         <div className="flex-1 flex items-center justify-center p-8 lg:p-12 min-h-0">
@@ -130,6 +137,11 @@ export default function Editor() {
           </div>
         </div>
       </section>
+
+      {/* ── Mobile: Download Bar (sticky bottom) ─── */}
+      <div className="shrink-0 md:hidden border-t border-slate-200 bg-white px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <DownloadButton qrResult={qrResult} />
+      </div>
     </div>
   )
 }
