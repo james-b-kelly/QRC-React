@@ -75,7 +75,7 @@ export default function Home() {
     return SHOWCASE_CONFIGS.map((config) => {
       const { label, ...opts } = config
       return generateQRCode({
-        data: 'https://example.com',
+        data: 'https://qrstudio.store',
         size: 200,
         margin: 2,
         ...opts,
@@ -218,7 +218,7 @@ export default function Home() {
               </thead>
               <tbody>
                 <tr className="bg-brand-50 border-t border-brand-100">
-                  <td className="px-6 py-4 font-semibold text-brand-700">QR Code Generator (us)</td>
+                  <td className="px-6 py-4 font-semibold text-brand-700">QR Studio (us)</td>
                   <td className="px-6 py-4 font-bold text-brand-700">$1.99 once</td>
                   <td className="px-6 py-4 text-brand-600 hidden sm:table-cell">Pay per QR code</td>
                 </tr>
