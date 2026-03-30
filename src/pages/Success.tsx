@@ -6,7 +6,7 @@ import QRPreview from '../components/editor/QRPreview'
 
 const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.qrstudio.store'
 
-type Status = 'verifying' | 'downloading' | 'done' | 'error'
+type Status = 'verifying' | 'ready' | 'done' | 'error'
 
 export default function Success() {
   const [searchParams] = useSearchParams()
@@ -90,24 +90,14 @@ export default function Success() {
         }
 
         setOptions(parsed)
-        setStatus('downloading')
 
-        // Step 3: Generate high-res files
+        // Generate high-res QR for display and download
         const result = generateQRCode({ ...parsed, size: 1024 })
         setSvg(result.svg)
 
-        // Step 4: Download SVG
-        const svgBlob = new Blob([result.svg], { type: 'image/svg+xml' })
-        downloadBlob(svgBlob, 'qr-code.svg')
-
-        // Step 5: Download PNG (small delay so browser doesn't block second download)
-        const pngBlob = await result.toPNG(1024)
-        await new Promise((r) => setTimeout(r, 500))
-        downloadBlob(pngBlob, 'qr-code.png')
-
         // Mark as consumed
         sessionStorage.setItem('qr_consumed', sessionId!)
-        setStatus('done')
+        setStatus('ready')
       } catch {
         if (!cancelled) {
           setStatus('error')
@@ -140,20 +130,7 @@ export default function Success() {
             </>
           )}
 
-          {status === 'downloading' && (
-            <>
-              {svg && (
-                <div className="w-48 mx-auto mb-8">
-                  <QRPreview svg={svg} />
-                </div>
-              )}
-              <div className="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-6" />
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">Preparing your files...</h1>
-              <p className="text-slate-500">Your QR code is downloading now.</p>
-            </>
-          )}
-
-          {status === 'done' && (
+          {(status === 'ready' || status === 'done') && (
             <>
               <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
                 <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -167,23 +144,22 @@ export default function Success() {
               )}
               <h1 className="text-2xl font-bold text-slate-900 mb-2">Your QR code is ready!</h1>
               <p className="text-slate-500 mb-6">
-                Both SVG and PNG files have been downloaded. Check your downloads folder.
+                Download your QR code in the format you need.
               </p>
 
-              {/* Manual download buttons — fallback if auto-download was blocked */}
               {svg && (
-                <div className="flex gap-3 justify-center mb-8">
+                <div className="flex gap-3 justify-center mb-6">
                   <button
                     type="button"
                     onClick={handleDownloadSVG}
-                    className="rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="flex-1 rounded-xl bg-cta px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-cta-hover transition-colors cursor-pointer"
                   >
                     Download SVG
                   </button>
                   <button
                     type="button"
                     onClick={handleDownloadPNG}
-                    className="rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="flex-1 rounded-xl bg-cta px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-cta-hover transition-colors cursor-pointer"
                   >
                     Download PNG
                   </button>
@@ -193,7 +169,7 @@ export default function Success() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/editor"
-                  className="rounded-xl bg-cta px-8 py-3.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-cta-hover transition-colors"
+                  className="rounded-xl border border-slate-200 px-8 py-3.5 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                 >
                   Create Another
                 </Link>
