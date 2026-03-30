@@ -24,7 +24,7 @@ export default function DownloadButton({ options }: DownloadButtonProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${window.location.origin}/editor`,
+          cancelUrl: `${window.location.origin}/cancel`,
         }),
       })
 

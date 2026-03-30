@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { generateQRCode } from '../lib/qr-engine'
 import type { QROptions } from '../lib/qr-engine'
@@ -15,6 +15,20 @@ export default function Success() {
   const [status, setStatus] = useState<Status>('verifying')
   const [error, setError] = useState<string>()
   const [svg, setSvg] = useState<string>()
+  const [options, setOptions] = useState<QROptions>()
+
+  const handleDownloadSVG = useCallback(() => {
+    if (!svg) return
+    const blob = new Blob([svg], { type: 'image/svg+xml' })
+    downloadBlob(blob, 'qr-code.svg')
+  }, [svg])
+
+  const handleDownloadPNG = useCallback(async () => {
+    if (!options) return
+    const result = generateQRCode({ ...options, size: 1024 })
+    const blob = await result.toPNG(1024)
+    downloadBlob(blob, 'qr-code.png')
+  }, [options])
 
   useEffect(() => {
     if (!sessionId) {
@@ -26,13 +40,15 @@ export default function Success() {
     // Check if already downloaded (prevent duplicates)
     const consumed = sessionStorage.getItem('qr_consumed')
     if (consumed === sessionId) {
-      // Regenerate QR for display but don't re-download
-      const stored = sessionStorage.getItem('qr_options')
-      if (stored) {
-        const options: QROptions = JSON.parse(stored)
-        const result = generateQRCode(options)
-        setSvg(result.svg)
-      }
+      try {
+        const stored = sessionStorage.getItem('qr_options')
+        if (stored) {
+          const parsed: QROptions = JSON.parse(stored)
+          setOptions(parsed)
+          const result = generateQRCode(parsed)
+          setSvg(result.svg)
+        }
+      } catch { /* ignore parse errors for consumed sessions */ }
       setStatus('done')
       return
     }
@@ -42,7 +58,9 @@ export default function Success() {
     async function verifyAndDownload() {
       try {
         // Step 1: Verify payment
-        const res = await fetch(`${CHECKOUT_API}/api/verify-payment?session_id=${sessionId}`)
+        const res = await fetch(
+          `${CHECKOUT_API}/api/verify-payment?session_id=${encodeURIComponent(sessionId!)}`,
+        )
         if (!res.ok) throw new Error('Verification failed')
 
         const { paid } = await res.json()
@@ -62,11 +80,20 @@ export default function Success() {
           return
         }
 
-        const options: QROptions = JSON.parse(stored)
+        let parsed: QROptions
+        try {
+          parsed = JSON.parse(stored)
+        } catch {
+          setStatus('error')
+          setError('QR code design data is corrupted. Please go back to the editor and try again.')
+          return
+        }
+
+        setOptions(parsed)
         setStatus('downloading')
 
         // Step 3: Generate high-res files
-        const result = generateQRCode({ ...options, size: 1024 })
+        const result = generateQRCode({ ...parsed, size: 1024 })
         setSvg(result.svg)
 
         // Step 4: Download SVG
@@ -139,9 +166,30 @@ export default function Success() {
                 </div>
               )}
               <h1 className="text-2xl font-bold text-slate-900 mb-2">Your QR code is ready!</h1>
-              <p className="text-slate-500 mb-8">
+              <p className="text-slate-500 mb-6">
                 Both SVG and PNG files have been downloaded. Check your downloads folder.
               </p>
+
+              {/* Manual download buttons — fallback if auto-download was blocked */}
+              {svg && (
+                <div className="flex gap-3 justify-center mb-8">
+                  <button
+                    type="button"
+                    onClick={handleDownloadSVG}
+                    className="rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    Download SVG
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDownloadPNG}
+                    className="rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    Download PNG
+                  </button>
+                </div>
+              )}
+
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/editor"
@@ -188,5 +236,5 @@ function downloadBlob(blob: Blob, filename: string) {
   a.href = url
   a.download = filename
   a.click()
-  URL.revokeObjectURL(url)
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
