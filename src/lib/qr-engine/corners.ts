@@ -51,6 +51,33 @@ export function renderCornerSquare(
         `M${cx - rInner},${cy}a${rInner},${rInner} 0 1 0 ${innerSize},0a${rInner},${rInner} 0 1 0 ${-innerSize},0z`
       )
     }
+
+    case 'classy': {
+      // Square with one rounded corner (top-left)
+      const rOuter = outerSize * 0.3
+      const rInner = innerSize * 0.25
+      return (
+        classyRect(x, y, outerSize, outerSize, rOuter, true) +
+        classyRect(x + innerOffset, y + innerOffset, innerSize, innerSize, rInner, false)
+      )
+    }
+
+    case 'dot-corners': {
+      // Square with small circles at each corner
+      const cornerR = outerSize * 0.1
+      const rInner = innerSize * 0.15
+      return (
+        // Outer square
+        roundedRect(x, y, outerSize, outerSize, cornerR, true) +
+        // Inner cutout
+        roundedRect(x + innerOffset, y + innerOffset, innerSize, innerSize, rInner, false) +
+        // Corner circles (decorative dots at each corner)
+        circle(x + cornerR, y + cornerR, cornerR) +
+        circle(x + outerSize - cornerR, y + cornerR, cornerR) +
+        circle(x + cornerR, y + outerSize - cornerR, cornerR) +
+        circle(x + outerSize - cornerR, y + outerSize - cornerR, cornerR)
+      )
+    }
   }
 }
 
@@ -72,7 +99,66 @@ export function renderCornerDot(
       const cy = y + r
       return `M${cx - r},${cy}a${r},${r} 0 1 1 ${dotSize},0a${r},${r} 0 1 1 ${-dotSize},0z`
     }
+
+    case 'diamond': {
+      const half = dotSize / 2
+      const cx = x + half
+      return (
+        `M${cx},${y}` +
+        `l${half},${half}` +
+        `l${-half},${half}` +
+        `l${-half},${-half}z`
+      )
+    }
+
+    case 'heart': {
+      const s = dotSize
+      const cx = x + s / 2
+      const top = y + s * 0.2
+      const r = s * 0.25
+      return (
+        `M${cx},${y + s * 0.9}` +
+        `C${x},${y + s * 0.55} ${x},${top} ${cx - r},${top}` +
+        `A${r},${r} 0 0 1 ${cx},${y + s * 0.4}` +
+        `A${r},${r} 0 0 1 ${cx + r},${top}` +
+        `C${x + s},${top} ${x + s},${y + s * 0.55} ${cx},${y + s * 0.9}z`
+      )
+    }
   }
+}
+
+function circle(cx: number, cy: number, r: number): string {
+  return `M${cx - r},${cy}a${r},${r} 0 1 1 ${r * 2},0a${r},${r} 0 1 1 ${-r * 2},0z`
+}
+
+function classyRect(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+  clockwise: boolean,
+): string {
+  // Square with rounded top-left corner only
+  if (clockwise) {
+    return (
+      `M${x + r},${y}` +
+      `h${w - r}` +
+      `v${h}` +
+      `h${-w}` +
+      `v${-(h - r)}` +
+      `a${r},${r} 0 0 1 ${r},${-r}z`
+    )
+  }
+  // Counter-clockwise (for cutout holes)
+  return (
+    `M${x + r},${y}` +
+    `a${r},${r} 0 0 0 ${-r},${r}` +
+    `v${h - r}` +
+    `h${w}` +
+    `v${-h}` +
+    `h${-(w - r)}z`
+  )
 }
 
 function roundedRect(
