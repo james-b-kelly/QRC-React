@@ -65,7 +65,6 @@ function classyRoundedDot(x: number, y: number, size: number): string {
 function diamondDot(x: number, y: number, size: number): string {
   const half = size / 2
   const cx = x + half
-  const cy = y + half
   return (
     `M${cx},${y}` +
     `l${half},${half}` +
