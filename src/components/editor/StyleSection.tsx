@@ -19,11 +19,15 @@ const CORNER_SQUARE_STYLES: { value: CornerSquareStyle; label: string }[] = [
   { value: 'rounded', label: 'Rounded' },
   { value: 'extra-rounded', label: 'Extra R.' },
   { value: 'dot', label: 'Dot' },
+  { value: 'classy', label: 'Classy' },
+  { value: 'dot-corners', label: 'Dot Corners' },
 ]
 
 const CORNER_DOT_STYLES: { value: CornerDotStyle; label: string }[] = [
   { value: 'square', label: 'Square' },
   { value: 'dot', label: 'Dot' },
+  { value: 'diamond', label: 'Diamond' },
+  { value: 'heart', label: 'Heart' },
 ]
 
 // Static preview objects — don't depend on current options

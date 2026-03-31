@@ -2,9 +2,9 @@ export type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H'
 
 export type DotStyle = 'square' | 'rounded' | 'dots' | 'classy' | 'classy-rounded' | 'diamond' | 'star' | 'heart' | 'hexagon'
 
-export type CornerSquareStyle = 'square' | 'rounded' | 'extra-rounded' | 'dot'
+export type CornerSquareStyle = 'square' | 'rounded' | 'extra-rounded' | 'dot' | 'classy' | 'dot-corners'
 
-export type CornerDotStyle = 'square' | 'dot'
+export type CornerDotStyle = 'square' | 'dot' | 'diamond' | 'heart'
 
 export interface GradientStop {
   offset: number

@@ -94,11 +94,12 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
   const finderSize = 7 * moduleSize
   const innerDotSize = 3 * moduleSize
 
-  for (const fp of matrix.finderPatterns) {
+  for (let fpIdx = 0; fpIdx < matrix.finderPatterns.length; fpIdx++) {
+    const fp = matrix.finderPatterns[fpIdx]
     const x = (fp.col + margin) * moduleSize
     const y = (fp.row + margin) * moduleSize
 
-    cornerSquarePaths.push(renderCornerSquare(cornerSquareStyle, x, y, finderSize))
+    cornerSquarePaths.push(renderCornerSquare(cornerSquareStyle, x, y, finderSize, fpIdx))
 
     // Inner dot is centered: offset by 2 modules from finder pattern start
     const dotX = x + 2 * moduleSize
