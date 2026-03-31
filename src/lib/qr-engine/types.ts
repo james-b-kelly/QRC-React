@@ -1,6 +1,6 @@
 export type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H'
 
-export type DotStyle = 'square' | 'rounded' | 'dots' | 'classy' | 'classy-rounded'
+export type DotStyle = 'square' | 'rounded' | 'dots' | 'classy' | 'classy-rounded' | 'diamond' | 'star' | 'heart' | 'hexagon'
 
 export type CornerSquareStyle = 'square' | 'rounded' | 'extra-rounded' | 'dot'
 

@@ -8,6 +8,10 @@ const DOT_STYLES: { value: DotStyle; label: string }[] = [
   { value: 'dots', label: 'Dots' },
   { value: 'classy', label: 'Classy' },
   { value: 'classy-rounded', label: 'Classy R.' },
+  { value: 'diamond', label: 'Diamond' },
+  { value: 'star', label: 'Star' },
+  { value: 'heart', label: 'Heart' },
+  { value: 'hexagon', label: 'Hexagon' },
 ]
 
 const CORNER_SQUARE_STYLES: { value: CornerSquareStyle; label: string }[] = [
