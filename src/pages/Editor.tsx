@@ -133,14 +133,14 @@ export default function Editor() {
         {/* Download bar — pinned to bottom */}
         <div className="shrink-0 border-t border-slate-200 bg-white px-6 py-3">
           <div className="max-w-[360px] mx-auto">
-            <DownloadButton qrResult={qrResult} />
+            <DownloadButton options={options} />
           </div>
         </div>
       </section>
 
       {/* ── Mobile: Download Bar (sticky bottom) ─── */}
       <div className="shrink-0 md:hidden border-t border-slate-200 bg-white px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <DownloadButton qrResult={qrResult} />
+        <DownloadButton options={options} />
       </div>
     </div>
   )
