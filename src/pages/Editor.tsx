@@ -112,9 +112,11 @@ export default function Editor() {
           <div className="py-4">
             <LogoSection logo={options.logo} onLogoChange={handleLogoChange} />
           </div>
+          {/* Frame section — disabled pending further design work (QRC-28)
           <div className="py-4">
             <FrameSection frame={options.frame} onFrameChange={handleFrameChange} />
           </div>
+          */}
           <div className="pt-4 pb-2">
             <AdvancedSection
               errorCorrectionLevel={options.errorCorrectionLevel ?? 'M'}
