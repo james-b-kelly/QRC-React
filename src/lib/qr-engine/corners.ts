@@ -3,11 +3,13 @@ import type { CornerDotStyle, CornerSquareStyle } from './types'
 // Corner square: the outer ring of the 7x7 finder pattern
 // Rendered as a single path at the given position, sized to cover 7 modules
 
+// cornerIndex: 0 = top-left, 1 = top-right, 2 = bottom-left
 export function renderCornerSquare(
   style: CornerSquareStyle,
   x: number,
   y: number,
   outerSize: number,
+  cornerIndex: number = 0,
 ): string {
   const innerSize = outerSize * (5 / 7)
   const innerOffset = outerSize * (1 / 7)
@@ -53,29 +55,30 @@ export function renderCornerSquare(
     }
 
     case 'classy': {
-      // Square with one rounded corner (top-left)
+      // Square with the outer corner rounded (corner facing away from QR center)
       const rOuter = outerSize * 0.3
       const rInner = innerSize * 0.25
+      // cornerIndex: 0=top-left, 1=top-right, 2=bottom-left
+      const corner = cornerIndex === 1 ? 'top-right' : cornerIndex === 2 ? 'bottom-left' : 'top-left'
       return (
-        classyRect(x, y, outerSize, outerSize, rOuter, true) +
-        classyRect(x + innerOffset, y + innerOffset, innerSize, innerSize, rInner, false)
+        classyRect(x, y, outerSize, outerSize, rOuter, true, corner) +
+        classyRect(x + innerOffset, y + innerOffset, innerSize, innerSize, rInner, false, corner)
       )
     }
 
     case 'dot-corners': {
-      // Square with small circles at each corner
-      const cornerR = outerSize * 0.1
-      const rInner = innerSize * 0.15
+      // Plain square with decorative circles at each corner
+      const dotR = outerSize * 0.1
       return (
-        // Outer square
-        roundedRect(x, y, outerSize, outerSize, cornerR, true) +
-        // Inner cutout
-        roundedRect(x + innerOffset, y + innerOffset, innerSize, innerSize, rInner, false) +
-        // Corner circles (decorative dots at each corner)
-        circle(x + cornerR, y + cornerR, cornerR) +
-        circle(x + outerSize - cornerR, y + cornerR, cornerR) +
-        circle(x + cornerR, y + outerSize - cornerR, cornerR) +
-        circle(x + outerSize - cornerR, y + outerSize - cornerR, cornerR)
+        // Outer square (sharp corners — no overlap with circles)
+        `M${x},${y}h${outerSize}v${outerSize}h${-outerSize}z` +
+        // Inner cutout (counter-clockwise)
+        `M${x + innerOffset},${y + innerOffset}v${innerSize}h${innerSize}v${-innerSize}z` +
+        // Decorative corner dots extending outward from corners
+        circle(x, y, dotR) +
+        circle(x + outerSize, y, dotR) +
+        circle(x, y + outerSize, dotR) +
+        circle(x + outerSize, y + outerSize, dotR)
       )
     }
   }
@@ -138,27 +141,28 @@ function classyRect(
   h: number,
   r: number,
   clockwise: boolean,
+  corner: 'top-left' | 'top-right' | 'bottom-left' = 'top-left',
 ): string {
-  // Square with rounded top-left corner only
+  // Square with one rounded corner — which corner depends on the finder pattern position
   if (clockwise) {
-    return (
-      `M${x + r},${y}` +
-      `h${w - r}` +
-      `v${h}` +
-      `h${-w}` +
-      `v${-(h - r)}` +
-      `a${r},${r} 0 0 1 ${r},${-r}z`
-    )
+    switch (corner) {
+      case 'top-left':
+        return `M${x + r},${y}h${w - r}v${h}h${-w}v${-(h - r)}a${r},${r} 0 0 1 ${r},${-r}z`
+      case 'top-right':
+        return `M${x},${y}h${w - r}a${r},${r} 0 0 1 ${r},${r}v${h - r}h${-w}v${-h}z`
+      case 'bottom-left':
+        return `M${x},${y}h${w}v${h}h${-(w - r)}a${r},${r} 0 0 1 ${-r},${-r}v${-(h - r)}z`
+    }
   }
   // Counter-clockwise (for cutout holes)
-  return (
-    `M${x + r},${y}` +
-    `a${r},${r} 0 0 0 ${-r},${r}` +
-    `v${h - r}` +
-    `h${w}` +
-    `v${-h}` +
-    `h${-(w - r)}z`
-  )
+  switch (corner) {
+    case 'top-left':
+      return `M${x + r},${y}a${r},${r} 0 0 0 ${-r},${r}v${h - r}h${w}v${-h}h${-(w - r)}z`
+    case 'top-right':
+      return `M${x},${y}v${h}h${w}v${-(h - r)}a${r},${r} 0 0 0 ${-r},${-r}h${-(w - r)}z`
+    case 'bottom-left':
+      return `M${x},${y}h${w}v${h}h${-(w - r)}a${r},${r} 0 0 0 ${-r},${-r}v${-(h - r)}z`
+  }
 }
 
 function roundedRect(
