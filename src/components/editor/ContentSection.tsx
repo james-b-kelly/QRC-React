@@ -19,7 +19,7 @@ interface ContentSectionProps {
 
 export default function ContentSection({ onDataChange }: ContentSectionProps) {
   const [dataType, setDataType] = useState<DataType>('url')
-  const [urlValue, setUrlValue] = useState('https://example.com')
+  const [urlValue, setUrlValue] = useState('https://yourwebsite.com')
   const [textValue, setTextValue] = useState('')
   const [phoneValue, setPhoneValue] = useState('')
   const [wifiFields, setWifiFields] = useState<WiFiFields>({ ssid: '', password: '', encryption: 'WPA', hidden: false })
@@ -42,7 +42,7 @@ export default function ContentSection({ onDataChange }: ContentSectionProps) {
         case 'email': data = formatData('email', emailFields); break
         case 'sms': data = formatData('sms', smsFields); break
       }
-      onDataChange(data || 'https://example.com')
+      onDataChange(data || 'https://yourwebsite.com')
     }, 150)
     return () => clearTimeout(debounceRef.current)
   }, [dataType, urlValue, textValue, phoneValue, wifiFields, vcardFields, emailFields, smsFields, onDataChange])
@@ -71,7 +71,7 @@ export default function ContentSection({ onDataChange }: ContentSectionProps) {
         {dataType === 'url' && (
           <div>
             <label htmlFor="url-input" className={labelClass}>URL</label>
-            <input id="url-input" type="url" value={urlValue} onChange={(e) => setUrlValue(e.target.value)} className={inputClass} placeholder="https://example.com" />
+            <input id="url-input" type="url" value={urlValue} onChange={(e) => setUrlValue(e.target.value)} className={inputClass} placeholder="https://yourwebsite.com" />
           </div>
         )}
 

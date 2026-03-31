@@ -10,7 +10,7 @@ import AdvancedSection from '../components/editor/AdvancedSection'
 import DownloadButton from '../components/editor/DownloadButton'
 import PresetsSection from '../components/editor/PresetsSection'
 
-const PREVIEW_URL = 'https://qr.example.com/preview'
+const PREVIEW_URL = 'https://qrstudio.store/preview'
 
 const DEFAULT_OPTIONS: QROptions = {
   data: PREVIEW_URL,
