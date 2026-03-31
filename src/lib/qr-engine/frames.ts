@@ -50,11 +50,14 @@ export function computeFrameLayout(
     case 'rounded-border': {
       const pad = qrSize * BORDER_PADDING_RATIO
       const bannerH = qrSize * BANNER_HEIGHT_RATIO
+      const strokeW = pad * 0.4
+      const halfStroke = strokeW / 2
       const totalWidth = qrSize + pad * 2
       const totalHeight = qrSize + pad * 2 + bannerH
       const r = pad * 2
       const textColor = frame.textColor ?? frameColor
-      const bg = `<rect x="0" y="0" width="${totalWidth}" height="${totalHeight}" rx="${r}" ry="${r}" fill="none" stroke="${frameColor}" stroke-width="${pad * 0.4}"/>` +
+      // Inset the rect by half stroke width so the stroke doesn't clip outside the viewBox
+      const bg = `<rect x="${halfStroke}" y="${halfStroke}" width="${totalWidth - strokeW}" height="${totalHeight - strokeW}" rx="${r}" ry="${r}" fill="none" stroke="${frameColor}" stroke-width="${strokeW}"/>` +
         `<text x="${totalWidth / 2}" y="${qrSize + pad * 2 + bannerH / 2}" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="600" font-size="${fontSize}" fill="${textColor}">${text}</text>`
       return { totalWidth, totalHeight, qrOffsetX: pad, qrOffsetY: pad, backgroundElements: bg, foregroundElements: '' }
     }

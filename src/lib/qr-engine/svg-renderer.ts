@@ -140,9 +140,9 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
 
     const svg = [
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${layout.totalWidth} ${layout.totalHeight}" width="${layout.totalWidth}" height="${layout.totalHeight}">`,
-      defsBlock,
       layout.backgroundElements,
       `<g transform="translate(${layout.qrOffsetX},${layout.qrOffsetY})">`,
+      defsBlock,
       qrContent,
       '</g>',
       layout.foregroundElements,
