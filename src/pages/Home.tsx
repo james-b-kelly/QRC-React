@@ -66,7 +66,7 @@ const FAQ_ITEMS = [
   { q: 'Are the QR codes scannable?', a: 'Yes. Every QR code is tested for scannability across all style combinations. The engine automatically adjusts error correction levels to ensure reliable scanning, even with logos.' },
   { q: 'What file formats do I get?', a: 'You receive both SVG (vector, infinitely scalable) and PNG (1024x1024, perfect for print and digital). Both are included with every purchase.' },
   { q: 'Can I use them commercially?', a: 'Absolutely. Once you purchase a QR code, you own it. Use it on business cards, packaging, menus, posters — wherever you need.' },
-  { q: 'Do I need an account?', a: null },
+  { q: 'Do I need an account?', a: null }, // answer uses dynamic price — rendered inline
   { q: 'Can I add my logo?', a: 'Yes. Upload any image and the engine will embed it in the centre of your QR code, automatically clearing space and adjusting error correction to maintain scannability.' },
   { q: 'What data types are supported?', a: 'URL, plain text, WiFi credentials, vCard contacts, email, phone, and SMS. Each is properly formatted to the QR standard.' },
 ]
