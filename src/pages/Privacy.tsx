@@ -110,14 +110,28 @@ export default function Privacy() {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">10. Governing Law</h2>
+          <h2 className="text-lg font-semibold text-slate-900">10. Your Rights</h2>
+          <p className="mt-2">
+            Since we collect minimal data and do not maintain user accounts, there is very little
+            personal information for us to manage. However, you may contact us at any time to:
+          </p>
+          <ul className="mt-2 list-disc pl-5 space-y-1">
+            <li>Ask what information, if any, we hold about you</li>
+            <li>Request deletion of any data associated with you</li>
+            <li>Ask questions about our privacy practices</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">11. Governing Law</h2>
           <p className="mt-2">
             This policy is governed by and construed in accordance with the laws of Australia.
+            Any disputes shall be subject to the exclusive jurisdiction of the courts of Australia.
           </p>
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">11. Contact</h2>
+          <h2 className="text-lg font-semibold text-slate-900">12. Contact</h2>
           <p className="mt-2">
             If you have any questions about this Privacy Policy, contact us at{' '}
             <a href="mailto:hello@qrstudio.store" className="text-brand-500 hover:underline">hello@qrstudio.store</a>.
