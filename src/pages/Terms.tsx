@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 export default function Terms() {
   useEffect(() => {
     window.scrollTo(0, 0)
-    document.title = 'Terms & Conditions | QR Studio'
+    document.title = 'Terms & Conditions | Quirc QR Codes'
   }, [])
 
   return (
@@ -15,7 +15,7 @@ export default function Terms() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">1. Acceptance of Terms</h2>
           <p className="mt-2">
-            By accessing or using QR Studio (<a href="https://qrstudio.store" className="text-brand-500 hover:underline">qrstudio.store</a>),
+            By accessing or using Quirc QR Codes (<a href="https://quirc.store" className="text-brand-500 hover:underline">quirc.store</a>),
             you agree to be bound by these Terms &amp; Conditions. If you do not agree, please do not use the service.
           </p>
         </div>
@@ -23,7 +23,7 @@ export default function Terms() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">2. Service Description</h2>
           <p className="mt-2">
-            QR Studio is a pay-per-use web application that lets you design and purchase custom QR codes.
+            Quirc QR Codes is a pay-per-use web application that lets you design and purchase custom QR codes.
             Each QR code costs a one-time fee of $1.99 USD. No account or subscription is required.
           </p>
         </div>
@@ -41,14 +41,14 @@ export default function Terms() {
           <h2 className="text-lg font-semibold text-slate-900">4. Intellectual Property</h2>
           <p className="mt-2">
             Once purchased, you own the QR code image you created and may use it for any lawful purpose&mdash;personal or
-            commercial&mdash;without additional licensing fees. The QR Studio name, logo, and website design remain the
-            property of QR Studio.
+            commercial&mdash;without additional licensing fees. The Quirc QR Codes name, logo, and website design remain the
+            property of Quirc QR Codes.
           </p>
         </div>
 
         <div>
           <h2 className="text-lg font-semibold text-slate-900">5. Acceptable Use</h2>
-          <p className="mt-2">You agree not to use QR Studio to:</p>
+          <p className="mt-2">You agree not to use Quirc QR Codes to:</p>
           <ul className="mt-2 list-disc pl-5 space-y-1">
             <li>Create QR codes that link to malicious, fraudulent, or illegal content</li>
             <li>Attempt to disrupt, overload, or exploit the service or its infrastructure</li>
@@ -62,7 +62,7 @@ export default function Terms() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">6. Disclaimer of Warranties</h2>
           <p className="mt-2">
-            QR Studio is provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without warranties of any kind,
+            Quirc QR Codes is provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without warranties of any kind,
             whether express or implied. We do not guarantee that the service will be uninterrupted, error-free, or
             that generated QR codes will be scannable by every device or application.
           </p>
@@ -71,7 +71,7 @@ export default function Terms() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">7. Limitation of Liability</h2>
           <p className="mt-2">
-            To the fullest extent permitted by law, QR Studio and its operators shall not be liable for any indirect,
+            To the fullest extent permitted by law, Quirc QR Codes and its operators shall not be liable for any indirect,
             incidental, special, or consequential damages arising out of or in connection with your use of the service.
             Our total liability for any claim shall not exceed the amount you paid for the specific QR code in question.
           </p>
@@ -98,7 +98,7 @@ export default function Terms() {
           <h2 className="text-lg font-semibold text-slate-900">10. Contact</h2>
           <p className="mt-2">
             If you have any questions about these terms, contact us at{' '}
-            <a href="mailto:hello@qrstudio.store" className="text-brand-500 hover:underline">hello@qrstudio.store</a>.
+            <a href="mailto:hello@quirc.store" className="text-brand-500 hover:underline">hello@quirc.store</a>.
           </p>
         </div>
       </div>

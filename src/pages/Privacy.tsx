@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 export default function Privacy() {
   useEffect(() => {
     window.scrollTo(0, 0)
-    document.title = 'Privacy Policy | QR Studio'
+    document.title = 'Privacy Policy | Quirc QR Codes'
   }, [])
 
   return (
@@ -15,7 +15,7 @@ export default function Privacy() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">1. Overview</h2>
           <p className="mt-2">
-            QR Studio (<a href="https://qrstudio.store" className="text-brand-500 hover:underline">qrstudio.store</a>)
+            Quirc QR Codes (<a href="https://quirc.store" className="text-brand-500 hover:underline">quirc.store</a>)
             is designed with privacy in mind. We do not require user accounts, we do not track you with analytics,
             and QR codes are generated entirely in your browser&mdash;we never see or store the content you encode.
           </p>
@@ -67,7 +67,7 @@ export default function Privacy() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">5. Cookies</h2>
           <p className="mt-2">
-            QR Studio does not set any first-party tracking cookies. Stripe may set cookies during the
+            Quirc QR Codes does not set any first-party tracking cookies. Stripe may set cookies during the
             checkout process for fraud prevention and payment processing. These are governed by Stripe&rsquo;s
             cookie policy.
           </p>
@@ -85,7 +85,7 @@ export default function Privacy() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">7. Data Security</h2>
           <p className="mt-2">
-            We take reasonable measures to protect the limited data we handle. All connections to QR Studio
+            We take reasonable measures to protect the limited data we handle. All connections to Quirc QR Codes
             are encrypted via HTTPS. Payment processing is handled by Stripe, which is PCI DSS Level 1
             certified&mdash;the highest level of payment security certification.
           </p>
@@ -94,7 +94,7 @@ export default function Privacy() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">8. Children&rsquo;s Privacy</h2>
           <p className="mt-2">
-            QR Studio is not directed at children under 13 years of age. We do not knowingly collect
+            Quirc QR Codes is not directed at children under 13 years of age. We do not knowingly collect
             personal information from children. If you believe a child has provided us with personal
             information, please contact us so we can take appropriate action.
           </p>
@@ -134,7 +134,7 @@ export default function Privacy() {
           <h2 className="text-lg font-semibold text-slate-900">12. Contact</h2>
           <p className="mt-2">
             If you have any questions about this Privacy Policy, contact us at{' '}
-            <a href="mailto:hello@qrstudio.store" className="text-brand-500 hover:underline">hello@qrstudio.store</a>.
+            <a href="mailto:hello@quirc.store" className="text-brand-500 hover:underline">hello@quirc.store</a>.
           </p>
         </div>
       </div>

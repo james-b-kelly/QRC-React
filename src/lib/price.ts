@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 
-const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.qrstudio.store'
+const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.quirc.store'
 const FALLBACK = '$1.99'
 
 const REGION_TO_CURRENCY: Record<string, string> = {

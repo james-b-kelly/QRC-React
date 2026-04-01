@@ -4,7 +4,7 @@ import { generateQRCode } from '../lib/qr-engine'
 import type { QROptions } from '../lib/qr-engine'
 import QRPreview from '../components/editor/QRPreview'
 
-const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.qrstudio.store'
+const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.quirc.store'
 
 type Status = 'verifying' | 'ready' | 'done' | 'error'
 
@@ -115,7 +115,7 @@ export default function Success() {
       <header className="shrink-0 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           <Link to="/" className="text-lg font-bold tracking-tight">
-            QR<span className="text-brand-500">.</span>
+            Quirc
           </Link>
         </div>
       </header>

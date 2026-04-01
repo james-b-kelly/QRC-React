@@ -6,7 +6,7 @@ export default function Cancel() {
       <header className="shrink-0 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           <Link to="/" className="text-lg font-bold tracking-tight">
-            QR<span className="text-brand-500">.</span>
+            Quirc
           </Link>
         </div>
       </header>

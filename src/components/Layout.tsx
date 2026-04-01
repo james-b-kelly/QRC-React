@@ -8,8 +8,8 @@ export default function Layout() {
     <div className="min-h-dvh flex flex-col font-sans text-slate-900 bg-white">
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
-          <Link to="/" aria-label="QR Studio — Home" className="text-lg font-bold tracking-tight">
-            QR<span className="text-brand-500">.</span>
+          <Link to="/" aria-label="Quirc — Home" className="text-lg font-bold tracking-tight">
+            Quirc
           </Link>
           <nav aria-label="Main" className="flex items-center gap-6">
             <a href="/#how-it-works" className="text-sm text-slate-500 hover:text-slate-900 transition-colors hidden sm:block">
@@ -91,12 +91,12 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-6 py-10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-500">
-              &copy; {new Date().getFullYear()} QR Studio. All rights reserved.
+              &copy; {new Date().getFullYear()} Quirc QR Codes. All rights reserved.
             </p>
             <nav aria-label="Footer" className="flex gap-6 text-sm text-slate-500">
               <Link to="/privacy" className="hover:text-slate-900 transition-colors">Privacy</Link>
               <Link to="/terms" className="hover:text-slate-900 transition-colors">Terms</Link>
-              <a href="mailto:hello@qrstudio.store" className="hover:text-slate-900 transition-colors">Contact</a>
+              <a href="mailto:hello@quirc.store" className="hover:text-slate-900 transition-colors">Contact</a>
             </nav>
           </div>
         </div>
