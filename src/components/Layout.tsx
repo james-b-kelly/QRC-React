@@ -95,7 +95,7 @@ export default function Layout() {
             </p>
             <nav aria-label="Footer" className="flex gap-6 text-sm text-slate-500">
               <span className="text-slate-400">Privacy</span>
-              <span className="text-slate-400">Terms</span>
+              <Link to="/terms" className="hover:text-slate-900 transition-colors">Terms</Link>
               <a href="mailto:hello@qrstudio.store" className="hover:text-slate-900 transition-colors">Contact</a>
             </nav>
           </div>
