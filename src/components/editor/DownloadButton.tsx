@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { QROptions } from '../../lib/qr-engine'
+import { usePrice } from '../../lib/price'
 
 const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.qrstudio.store'
 
@@ -8,6 +9,7 @@ interface DownloadButtonProps {
 }
 
 export default function DownloadButton({ options }: DownloadButtonProps) {
+  const price = usePrice()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>()
 
@@ -50,7 +52,7 @@ export default function DownloadButton({ options }: DownloadButtonProps) {
         disabled={loading}
         className="w-full h-12 rounded-lg bg-cta text-white font-semibold text-sm shadow-md shadow-orange-500/20 hover:bg-cta-hover active:scale-[0.98] transition-all cursor-pointer disabled:opacity-70 disabled:cursor-wait"
       >
-        {loading ? 'Redirecting to checkout...' : 'Download — $1.99'}
+        {loading ? 'Redirecting to checkout...' : `Download — ${price}`}
       </button>
       {error && (
         <p className="text-xs text-red-600 text-center" role="alert">{error}</p>

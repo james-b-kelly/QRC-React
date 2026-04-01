@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { generateQRCode } from '../lib/qr-engine'
 import type { QROptions } from '../lib/qr-engine'
+import { usePrice } from '../lib/price'
 
 // --- Showcase QR configs ---
 const SHOWCASE_CONFIGS: (Partial<QROptions> & { label: string })[] = [
@@ -65,12 +66,13 @@ const FAQ_ITEMS = [
   { q: 'Are the QR codes scannable?', a: 'Yes. Every QR code is tested for scannability across all style combinations. The engine automatically adjusts error correction levels to ensure reliable scanning, even with logos.' },
   { q: 'What file formats do I get?', a: 'You receive both SVG (vector, infinitely scalable) and PNG (1024x1024, perfect for print and digital). Both are included with every purchase.' },
   { q: 'Can I use them commercially?', a: 'Absolutely. Once you purchase a QR code, you own it. Use it on business cards, packaging, menus, posters — wherever you need.' },
-  { q: 'Do I need an account?', a: 'No. Just design your QR code, pay $1.99, and download. No sign-up, no passwords, no email required.' },
+  { q: 'Do I need an account?', a: null }, // answer uses dynamic price — rendered inline
   { q: 'Can I add my logo?', a: 'Yes. Upload any image and the engine will embed it in the centre of your QR code, automatically clearing space and adjusting error correction to maintain scannability.' },
   { q: 'What data types are supported?', a: 'URL, plain text, WiFi credentials, vCard contacts, email, phone, and SMS. Each is properly formatted to the QR standard.' },
 ]
 
 export default function Home() {
+  const price = usePrice()
   const showcaseSvgs = useMemo(() => {
     return SHOWCASE_CONFIGS.map((config) => {
       const { label, ...opts } = config
@@ -97,7 +99,7 @@ export default function Home() {
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1] mb-6">
               Beautiful QR codes.{' '}
-              <span className="text-brand-500">$1.99 each.</span>
+              <span className="text-brand-500">{price} each.</span>
             </h1>
             <p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mb-10">
               Other tools charge $40/month. You just need a QR code.
@@ -180,7 +182,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
               { step: '1', title: 'Design', desc: 'Choose your style, colours, and data type. See your QR code update in real time.' },
-              { step: '2', title: 'Pay', desc: 'One-time payment of $1.99. No subscription, no hidden fees, no account needed.' },
+              { step: '2', title: 'Pay', desc: `One-time payment of ${price}. No subscription, no hidden fees, no account needed.` },
               { step: '3', title: 'Download', desc: 'Get your QR code instantly as SVG and PNG. Print-ready, infinitely scalable.' },
             ].map((item) => (
               <div key={item.step} className="text-center">
@@ -219,7 +221,7 @@ export default function Home() {
               <tbody>
                 <tr className="bg-brand-50 border-t border-brand-100">
                   <td className="px-6 py-4 font-semibold text-brand-700">QR Studio (us)</td>
-                  <td className="px-6 py-4 font-bold text-brand-700">$1.99 once</td>
+                  <td className="px-6 py-4 font-bold text-brand-700">{price} once</td>
                   <td className="px-6 py-4 text-brand-600 hidden sm:table-cell">Pay per QR code</td>
                 </tr>
                 {COMPETITORS.map((c) => (
@@ -241,7 +243,7 @@ export default function Home() {
               to="/editor"
               className="block sm:inline-block rounded-xl bg-cta px-8 py-3.5 text-sm font-semibold text-white text-center shadow-lg shadow-orange-500/25 hover:bg-cta-hover transition-colors cursor-pointer"
             >
-              Create Your QR Code — $1.99
+              Create Your QR Code — {price}
             </Link>
           </div>
         </div>
@@ -272,7 +274,7 @@ export default function Home() {
                   </svg>
                 </summary>
                 <div className="px-6 pb-5 text-slate-500 leading-relaxed">
-                  {item.a}
+                  {item.a ?? `No. Just design your QR code, pay ${price}, and download. No sign-up, no passwords, no email required.`}
                 </div>
               </details>
             ))}
@@ -287,7 +289,7 @@ export default function Home() {
             Ready to make your QR code?
           </h2>
           <p className="text-lg text-slate-400 mb-10">
-            Design it in minutes. Pay $1.99. Download instantly.
+            Design it in minutes. Pay {price}. Download instantly.
           </p>
           <Link
             to="/editor"
