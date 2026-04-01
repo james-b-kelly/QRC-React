@@ -179,7 +179,7 @@ export default function Home() {
       <section id="how-it-works" className="py-20 lg:py-28 bg-slate-50">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
               Three steps. That's it.
             </h2>
           </div>
@@ -257,7 +257,7 @@ export default function Home() {
       <section id="faq" className="py-20 lg:py-28 bg-slate-50">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
               Frequently asked questions
             </h2>
           </div>
@@ -289,7 +289,7 @@ export default function Home() {
       {/* --- Final CTA --- */}
       <section className="py-20 lg:py-28 bg-slate-900">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
             Ready to make your QR code?
           </h2>
           <p className="text-lg text-slate-400 mb-10">
