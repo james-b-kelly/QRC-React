@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 export default function Terms() {
   useEffect(() => {
     window.scrollTo(0, 0)
+    document.title = 'Terms & Conditions | QR Studio'
   }, [])
 
   return (
