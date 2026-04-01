@@ -43,27 +43,25 @@ function getSnapshot() {
   return formatted
 }
 
-// Fetch the amount from Stripe, format with the user's local currency
-const localCurrency = detectCurrency()
 const locale = navigator.language || 'en-US'
 
+function formatWith(amount: number, currency: string) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    trailingZeroDisplay: 'stripIfInteger',
+  }).format(amount)
+}
+
+// Fetch real price from Stripe; fall back to locale-detected currency
 fetch(`${CHECKOUT_API}/api/price`)
   .then((res) => (res.ok ? res.json() : Promise.reject()))
-  .then(({ amount }: { amount: number }) => {
-    formatted = new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: localCurrency,
-      trailingZeroDisplay: 'stripIfInteger',
-    }).format(amount)
+  .then(({ amount, currency }: { amount: number; currency: string }) => {
+    formatted = formatWith(amount, currency.toUpperCase())
     listeners.forEach((l) => l())
   })
   .catch(() => {
-    // API unavailable — format fallback with detected currency
-    formatted = new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: localCurrency,
-      trailingZeroDisplay: 'stripIfInteger',
-    }).format(1.99)
+    formatted = formatWith(1.99, detectCurrency())
     listeners.forEach((l) => l())
   })
 
