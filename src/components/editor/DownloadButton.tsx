@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { QROptions } from '../../lib/qr-engine'
 import { usePrice } from '../../lib/price'
 
-const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.qrstudio.store'
+const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.quirc.store'
 
 interface DownloadButtonProps {
   options: QROptions
