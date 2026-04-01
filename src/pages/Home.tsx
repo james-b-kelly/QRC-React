@@ -57,8 +57,8 @@ const SHOWCASE_CONFIGS: (Partial<QROptions> & { label: string })[] = [
 ]
 
 const COMPETITORS = [
-  { name: 'QR Tiger', price: '$7–40/mo', note: 'Subscription required' },
-  { name: 'Beaconstac', price: '$5–49/mo', note: 'Subscription required' },
+  { name: 'QR Tiger', price: 'From $37/mo', note: 'Subscription required' },
+  { name: 'Uniqode', price: '$9–399/mo', note: 'Subscription required' },
   { name: 'QR Code Monkey', price: 'Free + $10/mo', note: 'Watermark on free tier' },
 ]
 
@@ -98,14 +98,16 @@ export default function Home() {
               No subscription. No account.
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1] mb-6">
-              Beautiful QR codes.{' '}
+              Custom QR codes.
+              <br />
               <span className="text-brand-500">{price} each.</span>
             </h1>
             <p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mb-10">
-              Other tools charge $40/month. You just need a QR code.
-              Design it, pay once, download instantly.
+              Other tools charge monthly subscriptions.
+              <br />
+              You just need a QR code. Design it, pay once, download instantly.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col items-center gap-4">
               <Link
                 to="/editor"
                 className="w-full sm:w-auto rounded-xl bg-cta px-8 py-4 text-base font-semibold text-white text-center shadow-lg shadow-orange-500/25 hover:bg-cta-hover transition-colors cursor-pointer"
@@ -127,7 +129,7 @@ export default function Home() {
               <div
                 key={config.label}
                 aria-hidden="true"
-                className={`w-28 h-28 sm:w-36 sm:h-36 lg:w-48 lg:h-48 rounded-2xl bg-white shadow-xl shadow-slate-200/50 p-3 sm:p-4 ${
+                className={`w-28 h-28 sm:w-36 sm:h-36 lg:w-48 lg:h-48 rounded-2xl bg-white shadow-xl shadow-slate-200/50 p-3 sm:p-4 overflow-hidden [&>svg]:!w-full [&>svg]:!h-full ${
                   i === 1 ? 'scale-110 -translate-y-3' : ''
                 }`}
                 dangerouslySetInnerHTML={{ __html: showcaseSvgs[[1, 2, 3][i]] }}
@@ -142,10 +144,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              Every style you can imagine
+              Add your brand, choose your style.
             </h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-              Rounded dots, gradient colours, custom corners, logo embedding — make it yours.
+              Rounded dots, gradient colours, custom corners,{' '}
+              <br className="hidden sm:inline" />
+              logo embedding — make it yours.
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -153,7 +157,7 @@ export default function Home() {
               <div key={config.label} className="flex flex-col items-center gap-3">
                 <div
                   aria-hidden="true"
-                  className="w-full aspect-square rounded-2xl bg-white border border-slate-200 p-4"
+                  className="w-full aspect-square rounded-2xl bg-white border border-slate-200 p-4 overflow-hidden [&>svg]:!w-full [&>svg]:!h-full"
                   dangerouslySetInnerHTML={{ __html: showcaseSvgs[i] }}
                 />
                 <span className="text-sm font-medium text-slate-600">{config.label}</span>
