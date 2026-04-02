@@ -142,7 +142,10 @@ export function decodeEditorState(encoded: string): Partial<QROptions> | null {
 
     if (state.d && VALID_DOT_STYLES.has(state.d)) result.dotStyle = state.d
     if (state.co) {
-      const corners: CornerOptions = {}
+      const corners: CornerOptions = {
+        squareStyle: DEFAULT_CORNER_SQUARE,
+        dotStyle: DEFAULT_CORNER_DOT,
+      }
       if (state.co.ss && VALID_CORNER_SQUARE_STYLES.has(state.co.ss)) corners.squareStyle = state.co.ss
       if (state.co.ds && VALID_CORNER_DOT_STYLES.has(state.co.ds)) corners.dotStyle = state.co.ds
       if (state.co.sc) corners.squareColor = expandColor(state.co.sc)
