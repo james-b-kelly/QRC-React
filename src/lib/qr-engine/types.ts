@@ -36,6 +36,15 @@ export interface CornerOptions {
   dotColor?: ColorConfig
 }
 
+export type FrameStyle = 'none' | 'banner-bottom' | 'banner-top' | 'rounded-border' | 'pill-label'
+
+export interface FrameOptions {
+  style: FrameStyle
+  text: string
+  textColor?: string   // default: white for banners, foreground color for border/pill
+  frameColor?: string  // default: foreground color
+}
+
 export interface QROptions {
   data: string
   errorCorrectionLevel?: ErrorCorrectionLevel
@@ -46,6 +55,7 @@ export interface QROptions {
   logo?: LogoOptions
   margin?: number // modules of quiet zone, default 2
   size?: number // SVG viewBox size in px, default 300
+  frame?: FrameOptions
 }
 
 export interface QRMatrix {

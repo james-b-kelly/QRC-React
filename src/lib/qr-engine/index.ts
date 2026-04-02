@@ -30,6 +30,8 @@ export type {
   GradientConfig,
   GradientStop,
   LogoOptions,
+  FrameStyle,
+  FrameOptions,
 } from './types'
 
 export type {

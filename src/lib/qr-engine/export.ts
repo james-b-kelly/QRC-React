@@ -5,9 +5,17 @@ export function svgToPNG(svgString: string, size: number = 1024): Promise<Blob> 
     const img = new Image()
 
     img.onload = () => {
+      // Parse viewBox to get aspect ratio (handles frames that change dimensions)
+      const viewBoxMatch = svgString.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/)
+      const svgW = viewBoxMatch ? parseFloat(viewBoxMatch[1]) : 1
+      const svgH = viewBoxMatch ? parseFloat(viewBoxMatch[2]) : 1
+      const aspect = svgH / svgW
+      const canvasW = size
+      const canvasH = Math.round(size * aspect)
+
       const canvas = document.createElement('canvas')
-      canvas.width = size
-      canvas.height = size
+      canvas.width = canvasW
+      canvas.height = canvasH
       const ctx = canvas.getContext('2d')
       if (!ctx) {
         URL.revokeObjectURL(url)
@@ -15,7 +23,7 @@ export function svgToPNG(svgString: string, size: number = 1024): Promise<Blob> 
         return
       }
 
-      ctx.drawImage(img, 0, 0, size, size)
+      ctx.drawImage(img, 0, 0, canvasW, canvasH)
       URL.revokeObjectURL(url)
 
       canvas.toBlob((blob) => {

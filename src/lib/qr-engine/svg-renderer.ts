@@ -8,6 +8,7 @@ import type {
 import { generateMatrix, isInFinderPattern } from './matrix'
 import { renderDot } from './dots'
 import { renderCornerDot, renderCornerSquare } from './corners'
+import { computeFrameLayout } from './frames'
 
 export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; effectiveECL: ErrorCorrectionLevel } {
   const dotStyle = options.dotStyle ?? 'square'
@@ -122,14 +123,40 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
   // Assemble SVG
   const defsBlock = defs.length > 0 ? `<defs>${defs.join('')}</defs>` : ''
 
-  const svg = [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">`,
-    defsBlock,
+  const qrContent = [
     bgRect,
     dotPaths.length > 0 ? `<path d="${dotPaths.join('')}" fill="${fgFill}"/>` : '',
     cornerSquarePaths.length > 0 ? `<path d="${cornerSquarePaths.join('')}" fill="${cornerSquareFill}" fill-rule="evenodd"/>` : '',
     cornerDotPaths.length > 0 ? `<path d="${cornerDotPaths.join('')}" fill="${cornerDotFill}"/>` : '',
     logoElement,
+  ].join('')
+
+  // Frame support
+  const frame = options.frame
+  const hasFrame = frame && frame.style !== 'none'
+
+  if (hasFrame) {
+    const resolvedFgColor = fgColor.type === 'solid' ? (fgColor.color ?? '#000000') : '#000000'
+    const layout = computeFrameLayout(size, frame, resolvedFgColor)
+
+    const svg = [
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${layout.totalWidth} ${layout.totalHeight}" width="${layout.totalWidth}" height="${layout.totalHeight}">`,
+      layout.backgroundElements,
+      `<g transform="translate(${layout.qrOffsetX},${layout.qrOffsetY})">`,
+      defsBlock,
+      qrContent,
+      '</g>',
+      layout.foregroundElements,
+      '</svg>',
+    ].join('')
+
+    return { svg, matrix, effectiveECL: ecl }
+  }
+
+  const svg = [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">`,
+    defsBlock,
+    qrContent,
     '</svg>',
   ].join('')
 

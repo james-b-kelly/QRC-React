@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions } from '../lib/qr-engine'
+import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions, FrameOptions } from '../lib/qr-engine'
 import { generateQRCode } from '../lib/qr-engine'
 import QRPreview from '../components/editor/QRPreview'
 import ContentSection from '../components/editor/ContentSection'
@@ -11,6 +11,7 @@ import DownloadButton from '../components/editor/DownloadButton'
 import PresetsSection from '../components/editor/PresetsSection'
 import ShareButton from '../components/editor/ShareButton'
 import { getHashState, setHashState } from '../lib/url-state'
+import FrameSection from '../components/editor/FrameSection'
 
 const PREVIEW_URL = 'https://quirc.store/preview'
 
@@ -71,6 +72,9 @@ export default function Editor() {
   const handleMarginChange = useCallback((margin: number) => {
     setOptions((prev) => ({ ...prev, margin }))
   }, [])
+  const handleFrameChange = useCallback((frame: FrameOptions | undefined) => {
+    setOptions((prev) => ({ ...prev, frame }))
+  }, [])
   const handleApplyPreset = useCallback((preset: Pick<QROptions, 'dotStyle' | 'cornerOptions' | 'foregroundColor' | 'backgroundColor'>) => {
     setOptions((prev) => ({ ...prev, ...preset }))
   }, [])
@@ -121,6 +125,11 @@ export default function Editor() {
           <div className="py-4">
             <LogoSection logo={options.logo} onLogoChange={handleLogoChange} />
           </div>
+          {/* Frame section — disabled pending further design work (QRC-28)
+          <div className="py-4">
+            <FrameSection frame={options.frame} onFrameChange={handleFrameChange} />
+          </div>
+          */}
           <div className="pt-4 pb-2">
             <AdvancedSection
               errorCorrectionLevel={options.errorCorrectionLevel ?? 'M'}
