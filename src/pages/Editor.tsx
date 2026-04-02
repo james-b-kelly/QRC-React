@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions } from '../lib/qr-engine'
 import { generateQRCode } from '../lib/qr-engine'
 import QRPreview from '../components/editor/QRPreview'
@@ -9,6 +9,8 @@ import LogoSection from '../components/editor/LogoSection'
 import AdvancedSection from '../components/editor/AdvancedSection'
 import DownloadButton from '../components/editor/DownloadButton'
 import PresetsSection from '../components/editor/PresetsSection'
+import ShareButton from '../components/editor/ShareButton'
+import { getHashState, setHashState } from '../lib/url-state'
 
 const PREVIEW_URL = 'https://quirc.store/preview'
 
@@ -24,7 +26,18 @@ const DEFAULT_OPTIONS: QROptions = {
 }
 
 export default function Editor() {
-  const [options, setOptions] = useState<QROptions>(DEFAULT_OPTIONS)
+  const [options, setOptions] = useState<QROptions>(() => {
+    const fromHash = getHashState()
+    return fromHash ? { ...DEFAULT_OPTIONS, ...fromHash } : DEFAULT_OPTIONS
+  })
+
+  // Sync options to URL hash (debounced)
+  const hashTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  useEffect(() => {
+    clearTimeout(hashTimerRef.current)
+    hashTimerRef.current = setTimeout(() => setHashState(options), 500)
+    return () => clearTimeout(hashTimerRef.current)
+  }, [options])
 
   const qrResult = useMemo(() => generateQRCode({ ...options, data: PREVIEW_URL }), [options])
 
@@ -132,15 +145,17 @@ export default function Editor() {
 
         {/* Download bar — pinned to bottom */}
         <div className="shrink-0 border-t border-slate-200 bg-white px-6 py-3">
-          <div className="max-w-[360px] mx-auto">
+          <div className="max-w-[360px] mx-auto space-y-2">
             <DownloadButton options={options} />
+            <ShareButton hasLogo={!!options.logo} />
           </div>
         </div>
       </section>
 
       {/* ── Mobile: Download Bar (sticky bottom) ─── */}
-      <div className="shrink-0 md:hidden border-t border-slate-200 bg-white px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      <div className="shrink-0 md:hidden border-t border-slate-200 bg-white px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] space-y-2">
         <DownloadButton options={options} />
+        <ShareButton hasLogo={!!options.logo} />
       </div>
     </div>
   )
