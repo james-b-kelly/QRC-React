@@ -42,6 +42,40 @@ const PRESETS: Preset[] = [
     foregroundColor: { type: 'solid', color: '#1e293b' },
     backgroundColor: { type: 'solid', color: '#FFFFFF' },
   },
+  {
+    name: 'Starlight',
+    dotStyle: 'star',
+    cornerOptions: { squareStyle: 'classy', dotStyle: 'dot' },
+    foregroundColor: {
+      type: 'gradient',
+      gradient: { type: 'linear', stops: [{ offset: 0, color: '#7c3aed' }, { offset: 1, color: '#d97706' }], rotation: 135 },
+    },
+    backgroundColor: { type: 'solid', color: '#FFFFFF' },
+  },
+  {
+    name: 'Love',
+    dotStyle: 'heart',
+    cornerOptions: { squareStyle: 'rounded', dotStyle: 'heart' },
+    foregroundColor: { type: 'solid', color: '#e11d48' },
+    backgroundColor: { type: 'solid', color: '#FFFFFF' },
+  },
+  {
+    name: 'Honeycomb',
+    dotStyle: 'hexagon',
+    cornerOptions: { squareStyle: 'dot-corners', dotStyle: 'diamond' },
+    foregroundColor: { type: 'solid', color: '#0d9488' },
+    backgroundColor: { type: 'solid', color: '#FFFFFF' },
+  },
+  {
+    name: 'Gem',
+    dotStyle: 'diamond',
+    cornerOptions: { squareStyle: 'dot', dotStyle: 'diamond' },
+    foregroundColor: {
+      type: 'gradient',
+      gradient: { type: 'linear', stops: [{ offset: 0, color: '#059669' }, { offset: 1, color: '#0ea5e9' }], rotation: 150 },
+    },
+    backgroundColor: { type: 'solid', color: '#FFFFFF' },
+  },
 ]
 
 const DOT_STYLES: DotStyle[] = ['square', 'rounded', 'dots', 'classy', 'classy-rounded', 'diamond', 'star', 'heart', 'hexagon']
