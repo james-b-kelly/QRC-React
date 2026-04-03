@@ -160,7 +160,7 @@ export default function Home() {
               <div
                 key={config.label}
                 aria-hidden="true"
-                className={`w-28 h-28 sm:w-36 sm:h-36 lg:w-48 lg:h-48 rounded-2xl bg-white shadow-xl shadow-slate-200/50 p-3 sm:p-4 overflow-hidden [&>svg]:!w-full [&>svg]:!h-full ${
+                className={`w-28 h-28 sm:w-36 sm:h-36 lg:w-48 lg:h-48 rounded-2xl bg-white shadow-xl shadow-slate-200/50 p-3 sm:p-4 overflow-hidden [&>svg]:!w-full [&>svg]:!h-full [&>svg]:!max-w-full [&>svg]:!max-h-full ${
                   i === 1 ? "scale-110 -translate-y-3" : ""
                 }`}
                 dangerouslySetInnerHTML={{ __html: showcaseSvgs[[1, 2, 3][i]] }}
@@ -191,7 +191,7 @@ export default function Home() {
                 <div className="flex flex-col items-center gap-3">
                   <div
                     aria-hidden="true"
-                    className="w-full aspect-square rounded-2xl bg-white border border-slate-200 p-4 overflow-hidden [&>svg]:!w-full [&>svg]:!h-full"
+                    className="w-full aspect-square rounded-2xl bg-white border border-slate-200 p-4 overflow-hidden [&>svg]:!w-full [&>svg]:!h-full [&>svg]:!max-w-full [&>svg]:!max-h-full"
                     dangerouslySetInnerHTML={{ __html: showcaseSvgs[i] }}
                   />
                   <span className="text-sm font-medium text-slate-600">
