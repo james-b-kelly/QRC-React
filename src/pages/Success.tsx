@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { generateQRCode } from '../lib/qr-engine'
 import type { QROptions } from '../lib/qr-engine'
+import SEO from '../components/SEO'
 import QRPreview from '../components/editor/QRPreview'
 
 const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.quirc.store'
@@ -112,6 +113,12 @@ export default function Success() {
 
   return (
     <div className="min-h-dvh flex flex-col font-sans text-slate-900 bg-gradient-to-b from-slate-50 to-white">
+      <SEO
+        title="Your QR code is ready | Quirc"
+        description="Download your purchased QR code."
+        path="/success"
+        noindex
+      />
       <header className="shrink-0 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           <Link to="/" className="text-lg font-bold tracking-tight">

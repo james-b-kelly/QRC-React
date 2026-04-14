@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions, FrameOptions } from '../lib/qr-engine'
+import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions } from '../lib/qr-engine'
 import { generateQRCode } from '../lib/qr-engine'
+import SEO from '../components/SEO'
 import QRPreview from '../components/editor/QRPreview'
 import ContentSection from '../components/editor/ContentSection'
 import StyleSection from '../components/editor/StyleSection'
@@ -11,7 +12,6 @@ import DownloadButton from '../components/editor/DownloadButton'
 import PresetsSection from '../components/editor/PresetsSection'
 import ShareButton from '../components/editor/ShareButton'
 import { getHashState, setHashState } from '../lib/url-state'
-import FrameSection from '../components/editor/FrameSection'
 
 const PREVIEW_URL = 'https://quirc.store/preview'
 
@@ -72,15 +72,18 @@ export default function Editor() {
   const handleMarginChange = useCallback((margin: number) => {
     setOptions((prev) => ({ ...prev, margin }))
   }, [])
-  const handleFrameChange = useCallback((frame: FrameOptions | undefined) => {
-    setOptions((prev) => ({ ...prev, frame }))
-  }, [])
   const handleApplyPreset = useCallback((preset: Pick<QROptions, 'dotStyle' | 'cornerOptions' | 'foregroundColor' | 'backgroundColor'>) => {
     setOptions((prev) => ({ ...prev, ...preset }))
   }, [])
 
   return (
     <div className="h-full flex flex-col md:flex-row">
+      <SEO
+        title="QR Code Editor — Design Custom QR Codes | Quirc"
+        description="Design a custom QR code with colors, rounded dots, logos, and frames. Live preview, instant download. $1.99 per code, no subscription."
+        path="/editor"
+      />
+      <h1 className="sr-only">QR Code Editor — Design custom QR codes</h1>
 
       {/* ── Mobile: Compact Preview (sticky top) ─── */}
       <div className="shrink-0 md:hidden bg-slate-50 border-b border-slate-200 p-3">

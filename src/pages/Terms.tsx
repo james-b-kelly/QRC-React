@@ -1,13 +1,18 @@
 import { useEffect } from 'react'
+import SEO from '../components/SEO'
 
 export default function Terms() {
   useEffect(() => {
     window.scrollTo(0, 0)
-    document.title = 'Terms & Conditions | Quirc QR Codes'
   }, [])
 
   return (
     <section className="max-w-3xl mx-auto px-6 py-16 sm:py-20">
+      <SEO
+        title="Terms & Conditions | Quirc QR Codes"
+        description="Terms and conditions for using Quirc QR Codes — a pay-per-use QR code generator. $1.99 per QR code, no subscription."
+        path="/terms"
+      />
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Terms &amp; Conditions</h1>
       <p className="mt-2 text-sm text-slate-500">Last updated: 1 April 2026</p>
 
