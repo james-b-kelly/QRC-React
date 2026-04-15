@@ -10,7 +10,7 @@ export default function Terms() {
     <section className="max-w-3xl mx-auto px-6 py-16 sm:py-20">
       <SEO
         title="Terms & Conditions | Quirc QR Codes"
-        description="Terms and conditions for using Quirc QR Codes — a pay-per-use QR code generator. $1.99 per QR code, no subscription."
+        description="Terms and conditions for using Quirc QR Codes — a pay-per-use QR code generator. $1.49 per QR code, no subscription."
         path="/terms"
       />
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Terms &amp; Conditions</h1>
@@ -29,14 +29,14 @@ export default function Terms() {
           <h2 className="text-lg font-semibold text-slate-900">2. Service Description</h2>
           <p className="mt-2">
             Quirc QR Codes is a pay-per-use web application that lets you design and purchase custom QR codes.
-            Each QR code costs a one-time fee of $1.99 USD. No account or subscription is required.
+            Each QR code costs a one-time fee of $1.49 USD. No account or subscription is required.
           </p>
         </div>
 
         <div>
           <h2 className="text-lg font-semibold text-slate-900">3. Payment &amp; Refunds</h2>
           <p className="mt-2">
-            Payments are processed securely by Stripe. By completing a purchase you authorise the charge of $1.99 USD
+            Payments are processed securely by Stripe. By completing a purchase you authorise the charge of $1.49 USD
             for each QR code. Because QR codes are delivered as instant digital downloads, all sales are final and
             no refunds will be issued once a QR code has been successfully generated and made available for download.
           </p>
