@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react'
 
 const CHECKOUT_API = import.meta.env.VITE_CHECKOUT_API_URL || 'https://checkout.quirc.store'
-const FALLBACK = '$1.99'
+const FALLBACK = '$1.49'
 
 const REGION_TO_CURRENCY: Record<string, string> = {
   US: 'USD', CA: 'CAD', GB: 'GBP', AU: 'AUD', NZ: 'NZD',
@@ -61,11 +61,11 @@ fetch(`${CHECKOUT_API}/api/price`)
     listeners.forEach((l) => l())
   })
   .catch(() => {
-    formatted = formatWith(1.99, detectCurrency())
+    formatted = formatWith(1.49, detectCurrency())
     listeners.forEach((l) => l())
   })
 
-/** Returns the formatted price string, e.g. "$1.99", "A$1.99", "£1.99" */
+/** Returns the formatted price string, e.g. "$1.49", "A$1.49", "£1.49" */
 export function usePrice(): string {
   return useSyncExternalStore(subscribe, getSnapshot)
 }

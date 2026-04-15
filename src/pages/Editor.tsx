@@ -80,7 +80,7 @@ export default function Editor() {
     <div className="h-full flex flex-col md:flex-row">
       <SEO
         title="QR Code Editor — Design Custom QR Codes | Quirc"
-        description="Design a custom QR code with colors, rounded dots, logos, and frames. Live preview, instant download. $1.99 per code, no subscription."
+        description="Design a custom QR code with colors, rounded dots, logos, and frames. Live preview, instant download. $1.49 per code, no subscription."
         path="/editor"
       />
       <h1 className="sr-only">QR Code Editor — Design custom QR codes</h1>

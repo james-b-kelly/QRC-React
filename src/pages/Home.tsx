@@ -174,7 +174,7 @@ export default function Home() {
     image: "https://quirc.store/og-image.png",
     offers: {
       "@type": "Offer",
-      price: "1.99",
+      price: "1.49",
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
     },
@@ -198,8 +198,8 @@ export default function Home() {
   return (
     <div>
       <SEO
-        title="Quirc QR Codes — Beautiful Custom QR Codes for $1.99"
-        description="Design styled QR codes for restaurant menus, wifi, Airbnbs, and artwork. Custom colours, rounded dots, and logo embedding. $1.99 each, no subscription."
+        title="Quirc QR Codes — Beautiful Custom QR Codes for $1.49"
+        description="Design styled QR codes for restaurant menus, wifi, Airbnbs, and artwork. Custom colours, rounded dots, and logo embedding. $1.49 each, no subscription."
         path="/"
         jsonLd={[softwareApplicationLd, faqPageLd]}
       />
