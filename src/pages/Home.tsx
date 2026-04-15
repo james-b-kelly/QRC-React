@@ -4,6 +4,7 @@ import { generateQRCode } from "../lib/qr-engine";
 import type { QROptions } from "../lib/qr-engine";
 import { usePrice } from "../lib/price";
 import FadeIn from "../components/FadeIn";
+import SEO from "../components/SEO";
 
 // --- Showcase QR configs ---
 const SHOWCASE_CONFIGS: (Partial<QROptions> & { label: string })[] = [
@@ -87,21 +88,56 @@ const FAQ_ITEMS = [
     a: "Yes. Every QR code is tested for scannability across all style combinations. The engine automatically adjusts error correction levels to ensure reliable scanning, even with logos.",
   },
   {
-    q: "What file formats do I get?",
-    a: "You receive both SVG (vector, infinitely scalable) and PNG (1024x1024, perfect for print and digital). Both are included with every purchase.",
+    q: "Can I make a QR code for a restaurant menu?",
+    a: "Yes — this is one of the most common uses. Point your QR code at a PDF menu, online ordering page, or your own website. Style it to match your restaurant's branding and print it directly onto table tents, coasters, or menus.",
   },
   {
-    q: "Can I use them commercially?",
-    a: "Absolutely. Once you purchase a QR code, you own it. Use it on business cards, packaging, menus, posters — wherever you need.",
+    q: "Can I make a QR code for wifi?",
+    a: "Yes. Choose the WiFi data type in the editor, enter your SSID and password, and scanning the code will connect compatible phones automatically — no typing required. Perfect for cafes, offices, and guest rooms.",
   },
-  { q: "Do I need an account?", a: null }, // answer uses dynamic price — rendered inline
+  {
+    q: "Can I use these for my Airbnb or short-term rental?",
+    a: "Absolutely. Create QR codes that link to wifi details, house manuals, check-in instructions, or local recommendations. Print them once and place them around the property — no subscription, no expiry.",
+  },
+  {
+    q: "Can I use these for artwork or gallery labels?",
+    a: "Yes. Link each QR code to an artist bio, artwork description, audio commentary, or purchase page. Styled QR codes look great on exhibition labels and collector materials.",
+  },
   {
     q: "Can I add my logo?",
     a: "Yes. Upload any image and the engine will embed it in the centre of your QR code, automatically clearing space and adjusting error correction to maintain scannability.",
   },
   {
-    q: "What data types are supported?",
-    a: "URL, plain text, WiFi credentials, vCard contacts, email, phone, and SMS. Each is properly formatted to the QR standard.",
+    q: "Do the QR codes expire?",
+    a: "No. Unlike subscription services, your QR codes never expire and never stop working. You own them outright — they point directly at your URL without going through a redirect service.",
+  },
+  {
+    q: "What file formats do I get?",
+    a: "You receive both SVG (vector, infinitely scalable) and PNG (1024x1024, perfect for print and digital). Both are included with every purchase.",
+  },
+  { q: "Do I need an account?", a: null }, // answer uses dynamic price — rendered inline
+];
+
+const USE_CASES = [
+  {
+    title: "Restaurant menus",
+    desc: "Link diners to a PDF menu, online ordering, or your website. Print onto table tents, coasters, or menu cards.",
+    icon: "🍽️",
+  },
+  {
+    title: "Wifi sharing",
+    desc: "Guests connect to your network in one scan — no typing passwords. Ideal for cafes, offices, and rentals.",
+    icon: "📶",
+  },
+  {
+    title: "Airbnb instructions",
+    desc: "Check-in info, house manuals, wifi details, local guides — all in one scan. Print once, reuse forever.",
+    icon: "🏠",
+  },
+  {
+    title: "Artwork labels",
+    desc: "Artist bios, audio commentary, purchase pages. Styled codes look great on exhibition and gallery materials.",
+    icon: "🖼️",
   },
 ];
 
@@ -126,8 +162,47 @@ export default function Home() {
     SHOWCASE_CONFIGS[3],
   ];
 
+  const softwareApplicationLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Quirc QR Codes",
+    description:
+      "Design and purchase beautiful custom QR codes with colours, rounded dots, gradients, logos, and frames. One-time payment, no subscription.",
+    applicationCategory: "DesignApplication",
+    operatingSystem: "Web",
+    url: "https://quirc.store/",
+    image: "https://quirc.store/og-image.png",
+    offers: {
+      "@type": "Offer",
+      price: "1.99",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+    },
+  };
+
+  const faqPageLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ_ITEMS.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          item.a ??
+          `No. Just design your QR code, pay ${price}, and download. No sign-up, no passwords, no email required.`,
+      },
+    })),
+  };
+
   return (
     <div>
+      <SEO
+        title="Quirc QR Codes — Beautiful Custom QR Codes for $1.99"
+        description="Design styled QR codes for restaurant menus, wifi, Airbnbs, and artwork. Custom colours, rounded dots, and logo embedding. $1.99 each, no subscription."
+        path="/"
+        jsonLd={[softwareApplicationLd, faqPageLd]}
+      />
       {/* --- Hero --- */}
       <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-7xl mx-auto px-6 pt-20 pb-24 lg:pt-28 lg:pb-32">
@@ -159,7 +234,8 @@ export default function Home() {
             {heroConfigs.map((config, i) => (
               <div
                 key={config.label}
-                aria-hidden="true"
+                role="img"
+                aria-label={`${config.label} style QR code example`}
                 className={`w-28 h-28 sm:w-36 sm:h-36 lg:w-48 lg:h-48 rounded-2xl bg-white shadow-xl shadow-slate-200/50 p-3 sm:p-4 overflow-hidden [&>svg]:!w-full [&>svg]:!h-full [&>svg]:!max-w-full [&>svg]:!max-h-full ${
                   i === 1 ? "scale-110 -translate-y-3" : ""
                 }`}
@@ -190,7 +266,8 @@ export default function Home() {
               <FadeIn key={config.label} delay={i * 80}>
                 <div className="flex flex-col items-center gap-3">
                   <div
-                    aria-hidden="true"
+                    role="img"
+                    aria-label={`${config.label} style QR code example`}
                     className="w-full aspect-square rounded-2xl bg-white border border-slate-200 p-4 overflow-hidden [&>svg]:!w-full [&>svg]:!h-full [&>svg]:!max-w-full [&>svg]:!max-h-full"
                     dangerouslySetInnerHTML={{ __html: showcaseSvgs[i] }}
                   />
@@ -329,6 +406,42 @@ export default function Home() {
               </Link>
             </div>
           </FadeIn>
+        </div>
+      </section>
+
+      {/* --- Use Cases --- */}
+      <section id="use-cases" className="py-20 lg:py-28 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeIn>
+            <div className="text-center mb-14">
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+                Made for menus, wifi, rentals, and more
+              </h2>
+              <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+                Custom QR codes for the things people actually use them for.
+              </p>
+            </div>
+          </FadeIn>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {USE_CASES.map((useCase, i) => (
+              <FadeIn key={useCase.title} delay={i * 80}>
+                <Link
+                  to="/editor"
+                  className="block h-full rounded-2xl border border-slate-200 bg-white p-6 hover:border-brand-300 hover:shadow-lg hover:shadow-slate-200/50 transition-all"
+                >
+                  <div className="text-4xl mb-4" aria-hidden="true">
+                    {useCase.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                    {useCase.title}
+                  </h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    {useCase.desc}
+                  </p>
+                </Link>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 

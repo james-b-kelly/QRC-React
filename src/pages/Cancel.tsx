@@ -1,8 +1,15 @@
 import { Link } from 'react-router-dom'
+import SEO from '../components/SEO'
 
 export default function Cancel() {
   return (
     <div className="min-h-dvh flex flex-col font-sans text-slate-900 bg-gradient-to-b from-slate-50 to-white">
+      <SEO
+        title="Payment cancelled | Quirc"
+        description="Your payment was cancelled."
+        path="/cancel"
+        noindex
+      />
       <header className="shrink-0 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           <Link to="/" className="text-lg font-bold tracking-tight">
