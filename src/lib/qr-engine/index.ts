@@ -30,8 +30,9 @@ export type {
   GradientConfig,
   GradientStop,
   LogoOptions,
-  FrameStyle,
-  FrameOptions,
+  TextPosition,
+  TextPanelOptions,
+  ContainerOptions,
 } from './types'
 
 export type {
