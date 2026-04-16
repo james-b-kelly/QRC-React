@@ -1,9 +1,23 @@
 import { renderSVG } from './svg-renderer'
 import { svgToPNG } from './export'
+import { measureAllPanels } from './text-measurement'
+import { computeTextPanelLayout } from './text-panels'
+import type { TextPanelLayout } from './text-panels'
 import type { QROptions, QRResult } from './types'
 
 export function generateQRCode(options: QROptions): QRResult {
-  const { svg } = renderSVG(options)
+  let textPanelLayout: TextPanelLayout | undefined
+
+  const activePanels = options.textPanels?.filter((p) => p.text.trim()) ?? []
+  if (activePanels.length > 0) {
+    const qrSize = options.size ?? 300
+    const measured = measureAllPanels(activePanels, qrSize)
+    if (measured.length > 0) {
+      textPanelLayout = computeTextPanelLayout(qrSize, activePanels, measured, options.container)
+    }
+  }
+
+  const { svg } = renderSVG(options, textPanelLayout)
 
   return {
     svg,
