@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions } from '../lib/qr-engine'
+import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions, TextPanelOptions, ContainerOptions } from '../lib/qr-engine'
 import { generateQRCode } from '../lib/qr-engine'
 import SEO from '../components/SEO'
 import QRPreview from '../components/editor/QRPreview'
@@ -10,6 +10,7 @@ import LogoSection from '../components/editor/LogoSection'
 import AdvancedSection from '../components/editor/AdvancedSection'
 import DownloadButton from '../components/editor/DownloadButton'
 import PresetsSection from '../components/editor/PresetsSection'
+import TextPanelSection from '../components/editor/TextPanelSection'
 import ShareButton from '../components/editor/ShareButton'
 import { getHashState, setHashState } from '../lib/url-state'
 
@@ -75,6 +76,12 @@ export default function Editor() {
   const handleApplyPreset = useCallback((preset: Pick<QROptions, 'dotStyle' | 'cornerOptions' | 'foregroundColor' | 'backgroundColor'>) => {
     setOptions((prev) => ({ ...prev, ...preset }))
   }, [])
+  const handleTextPanelsChange = useCallback((textPanels: TextPanelOptions[]) => {
+    setOptions((prev) => ({ ...prev, textPanels }))
+  }, [])
+  const handleContainerChange = useCallback((container: ContainerOptions) => {
+    setOptions((prev) => ({ ...prev, container }))
+  }, [])
 
   return (
     <div className="h-full flex flex-col md:flex-row">
@@ -128,11 +135,14 @@ export default function Editor() {
           <div className="py-4">
             <LogoSection logo={options.logo} onLogoChange={handleLogoChange} />
           </div>
-          {/* Frame section — disabled pending further design work (QRC-28)
           <div className="py-4">
-            <FrameSection frame={options.frame} onFrameChange={handleFrameChange} />
+            <TextPanelSection
+              panels={options.textPanels ?? []}
+              container={options.container}
+              onPanelsChange={handleTextPanelsChange}
+              onContainerChange={handleContainerChange}
+            />
           </div>
-          */}
           <div className="pt-4 pb-2">
             <AdvancedSection
               errorCorrectionLevel={options.errorCorrectionLevel ?? 'M'}
