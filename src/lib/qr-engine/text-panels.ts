@@ -2,24 +2,11 @@ import type { TextPanelOptions, ContainerOptions } from './types'
 import type { MeasuredPanel } from './text-measurement'
 
 export interface TextPanelLayout {
-  totalWidth: number
-  totalHeight: number
   viewBoxWidth: number
   viewBoxHeight: number
-  viewBoxOffsetX: number
   qrOffsetX: number
   qrOffsetY: number
-  containerRect: {
-    x: number
-    y: number
-    width: number
-    height: number
-    rx: number
-    fill: string
-    fillOpacity: number
-    stroke: string
-    strokeWidth: number
-  } | null
+  containerSvg: string
   panelElements: string
 }
 
@@ -43,6 +30,7 @@ export function computeTextPanelLayout(
 ): TextPanelLayout {
   const cPad = (container?.padding ?? 0) * qrSize
   const borderWidth = (container?.borderWidth ?? 0) * qrSize
+  const halfBorder = borderWidth / 2
 
   const top = findPanel(measured, 'top')
   const bottom = findPanel(measured, 'bottom')
@@ -54,55 +42,51 @@ export function computeTextPanelLayout(
   const leftW = left?.width ?? 0
   const rightW = right?.width ?? 0
 
-  // Core container dimensions — first pass to determine if panels break bounds
-  const prelimContainerWidth = cPad + leftW + qrSize + rightW + cPad + borderWidth * 2
+  // Inner widths (content + container padding, inside the border)
+  const qrZoneInner = cPad + leftW + qrSize + rightW + cPad
+  const topBreaks = top && top.width > qrZoneInner
+  const bottomBreaks = bottom && bottom.width > qrZoneInner
+  const topZoneInner = topBreaks ? top!.width : qrZoneInner
+  const bottomZoneInner = bottomBreaks ? bottom!.width : qrZoneInner
 
-  // Check if top/bottom panels break bounds (wider than container)
-  const topBreaks = top && top.width > prelimContainerWidth
-  const bottomBreaks = bottom && bottom.width > prelimContainerWidth
+  // Outer dimensions (inner + border on each side)
+  const maxInner = Math.max(qrZoneInner, topZoneInner, bottomZoneInner)
+  const viewBoxWidth = maxInner + borderWidth * 2
+  const totalInnerHeight = cPad + topH + qrSize + bottomH + cPad
+  const viewBoxHeight = totalInnerHeight + borderWidth * 2
 
-  // Container excludes breaking panels — they get their own background
-  const containerTopH = topBreaks ? 0 : topH
-  const containerBottomH = bottomBreaks ? 0 : bottomH
-  const containerWidth = cPad + leftW + qrSize + rightW + cPad + borderWidth * 2
-  const containerHeight = cPad + containerTopH + qrSize + containerBottomH + cPad + borderWidth * 2
+  const cx = viewBoxWidth / 2
 
-  const maxBreakingWidth = Math.max(
-    topBreaks ? top!.width : 0,
-    bottomBreaks ? bottom!.width : 0,
-  )
-  const viewBoxWidth = Math.max(containerWidth, maxBreakingWidth)
-  const viewBoxOffsetX = (viewBoxWidth - containerWidth) / 2
+  // QR position (centered within the qr zone, which is centered in viewBox)
+  const qrOffsetX = cx - qrZoneInner / 2 + cPad + leftW
+  const qrOffsetY = borderWidth + cPad + topH
 
-  // ViewBox height includes the container plus any breaking panels outside it
-  const breakingTopH = topBreaks ? top!.height : 0
-  const breakingBottomH = bottomBreaks ? bottom!.height : 0
-  const viewBoxHeight = breakingTopH + containerHeight + breakingBottomH
-
-  // QR position: offset by breaking top panel (outside container) + container internals
-  const qrOffsetX = viewBoxOffsetX + borderWidth + cPad + leftW
-  const qrOffsetY = breakingTopH + borderWidth + cPad + containerTopH
-
-  // Container background rect
-  let containerRect: TextPanelLayout['containerRect'] = null
+  // Build container SVG element
+  let containerSvg = ''
   if (measured.length > 0) {
     const bgColor = container?.backgroundColor ?? '#FFFFFF'
     const bgOpacity = container?.backgroundOpacity ?? 1
     const targetRadius = (container?.cornerRadius ?? 0) * qrSize
-    const maxRadius = Math.min(containerWidth, containerHeight) / 2
-    const rx = Math.min(targetRadius, maxRadius)
     const strokeColor = container?.borderColor ?? '#000000'
+    const strokeAttr = borderWidth > 0
+      ? ` stroke="${strokeColor}" stroke-width="${borderWidth}"`
+      : ''
 
-    containerRect = {
-      x: viewBoxOffsetX + borderWidth / 2,
-      y: breakingTopH + borderWidth / 2,
-      width: containerWidth - borderWidth,
-      height: containerHeight - borderWidth,
-      rx,
-      fill: bgColor,
-      fillOpacity: bgOpacity,
-      stroke: borderWidth > 0 ? strokeColor : 'none',
-      strokeWidth: borderWidth,
+    if (!topBreaks && !bottomBreaks) {
+      // Simple rounded rect — no stepping needed
+      const maxRadius = Math.min(viewBoxWidth - borderWidth, viewBoxHeight - borderWidth) / 2
+      const rx = Math.min(targetRadius, maxRadius)
+      containerSvg = `<rect x="${halfBorder}" y="${halfBorder}" width="${viewBoxWidth - borderWidth}" height="${viewBoxHeight - borderWidth}" rx="${rx}" ry="${rx}" fill="${bgColor}" fill-opacity="${bgOpacity}"${strokeAttr}/>`
+    } else {
+      // Stepped path — one continuous border around all zones
+      const pathD = buildSteppedPath(
+        cx, viewBoxWidth, viewBoxHeight,
+        qrZoneInner, topZoneInner, bottomZoneInner,
+        topH, qrSize, bottomH,
+        cPad, halfBorder, targetRadius,
+        topBreaks ?? false, bottomBreaks ?? false,
+      )
+      containerSvg = `<path d="${pathD}" fill="${bgColor}" fill-opacity="${bgOpacity}"${strokeAttr}/>`
     }
   }
 
@@ -119,53 +103,27 @@ export function computeTextPanelLayout(
     const fontSize = (opts.fontSize ?? 0.06) * qrSize
     const lines = opts.text.split('\n')
 
+    // Panel position within the viewBox
     let panelX: number
     let panelY: number
 
     if (m.position === 'top') {
-      panelX = qrOffsetX - leftW - cPad
-      // Breaking top panel sits above the container; non-breaking sits inside
-      panelY = topBreaks ? 0 : (breakingTopH + borderWidth + cPad)
+      panelX = cx - topZoneInner / 2
+      panelY = borderWidth
     } else if (m.position === 'bottom') {
-      panelX = qrOffsetX - leftW - cPad
-      // Breaking bottom panel sits below the container; non-breaking sits inside
-      panelY = bottomBreaks
-        ? (breakingTopH + containerHeight)
-        : (qrOffsetY + qrSize)
+      panelX = cx - bottomZoneInner / 2
+      panelY = borderWidth + cPad + topH + qrSize
     } else if (m.position === 'left') {
-      panelX = viewBoxOffsetX + borderWidth + cPad
+      panelX = cx - qrZoneInner / 2 + cPad
       panelY = qrOffsetY
     } else {
       panelX = qrOffsetX + qrSize
       panelY = qrOffsetY
     }
 
-    const isHorizontal = m.position === 'top' || m.position === 'bottom'
-    const breaksContainer = isHorizontal && m.width > containerWidth
-
-    // Draw independent background if text breaks bounds
-    if (breaksContainer) {
-      const bgX = (viewBoxWidth - m.width) / 2
-      const bgY = panelY
-      const maxR = m.height / 2
-      const targetR = (container?.cornerRadius ?? 0) * qrSize
-      const bgR = Math.min(targetR, maxR)
-      const bgColor = container?.backgroundColor ?? '#FFFFFF'
-      const bgOpacity = container?.backgroundOpacity ?? 1
-      const strokeAttr = borderWidth > 0
-        ? ` stroke="${container?.borderColor ?? '#000000'}" stroke-width="${borderWidth}"`
-        : ''
-
-      panelSvgParts.push(
-        `<rect x="${bgX + borderWidth / 2}" y="${bgY + borderWidth / 2}" width="${m.width - borderWidth}" height="${m.height - borderWidth}" rx="${bgR}" ry="${bgR}" fill="${bgColor}" fill-opacity="${bgOpacity}"${strokeAttr}/>`
-      )
-    }
-
     // Draw text lines
     const textBlockWidth = m.width - padding * 2
-    const textBlockX = breaksContainer
-      ? (viewBoxWidth - m.width) / 2 + padding
-      : panelX + padding
+    const textBlockX = panelX + padding
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]
@@ -190,14 +148,135 @@ export function computeTextPanelLayout(
   }
 
   return {
-    totalWidth: containerWidth,
-    totalHeight: containerHeight,
     viewBoxWidth,
     viewBoxHeight,
-    viewBoxOffsetX,
     qrOffsetX,
     qrOffsetY,
-    containerRect,
+    containerSvg,
     panelElements: panelSvgParts.join(''),
   }
+}
+
+/**
+ * Build an SVG path for a stepped container shape.
+ * The path traces at halfBorder inset from the viewBox edge (centered on the stroke).
+ * Outer corners get rounded radii; step transitions are sharp 90° corners.
+ */
+function buildSteppedPath(
+  cx: number,
+  _viewBoxWidth: number,
+  viewBoxHeight: number,
+  qrZoneInner: number,
+  topZoneInner: number,
+  bottomZoneInner: number,
+  topH: number,
+  qrSize: number,
+  _bottomH: number,
+  cPad: number,
+  halfBorder: number,
+  targetRadius: number,
+  topBreaks: boolean,
+  bottomBreaks: boolean,
+): string {
+  // Path coordinates for each zone (centered, at halfBorder from outer edge)
+  const pathHalf = (inner: number) => (inner + halfBorder * 2) / 2
+  const topPH = pathHalf(topZoneInner)
+  const qrPH = pathHalf(qrZoneInner)
+  const botPH = pathHalf(bottomZoneInner)
+
+  const pathTop = halfBorder
+  const pathBottom = viewBoxHeight - halfBorder
+
+  // Step Y positions (where width transitions happen)
+  const topStepY = halfBorder + cPad + topH
+  const bottomStepY = halfBorder + cPad + topH + qrSize
+
+  // Zone dimensions for radius clamping
+  const topWidth = topPH * 2
+  const qrWidth = qrPH * 2
+  const botWidth = botPH * 2
+  const topZoneH = topStepY - pathTop
+  const qrZoneH = bottomStepY - topStepY
+  const botZoneH = pathBottom - bottomStepY
+
+  // Clamp radii per zone (half of smallest dimension)
+  const r = targetRadius
+
+  if (topBreaks && !bottomBreaks) {
+    // Wide top, narrow bottom — step inward at topStepY
+    const rTop = Math.min(r, topWidth / 2, topZoneH / 2)
+    const rBot = Math.min(r, qrWidth / 2, (qrZoneH + botZoneH) / 2)
+    const wL = cx - topPH, wR = cx + topPH
+    const nL = cx - qrPH, nR = cx + qrPH
+
+    return [
+      `M ${wL + rTop} ${pathTop}`,
+      `L ${wR - rTop} ${pathTop}`,
+      `A ${rTop} ${rTop} 0 0 1 ${wR} ${pathTop + rTop}`,
+      `L ${wR} ${topStepY}`,
+      `L ${nR} ${topStepY}`,
+      `L ${nR} ${pathBottom - rBot}`,
+      `A ${rBot} ${rBot} 0 0 1 ${nR - rBot} ${pathBottom}`,
+      `L ${nL + rBot} ${pathBottom}`,
+      `A ${rBot} ${rBot} 0 0 1 ${nL} ${pathBottom - rBot}`,
+      `L ${nL} ${topStepY}`,
+      `L ${wL} ${topStepY}`,
+      `L ${wL} ${pathTop + rTop}`,
+      `A ${rTop} ${rTop} 0 0 1 ${wL + rTop} ${pathTop}`,
+      'Z',
+    ].join(' ')
+  }
+
+  if (bottomBreaks && !topBreaks) {
+    // Narrow top, wide bottom — step outward at bottomStepY
+    const rTop = Math.min(r, qrWidth / 2, (topZoneH + qrZoneH) / 2)
+    const rBot = Math.min(r, botWidth / 2, botZoneH / 2)
+    const nL = cx - qrPH, nR = cx + qrPH
+    const wL = cx - botPH, wR = cx + botPH
+
+    return [
+      `M ${nL + rTop} ${pathTop}`,
+      `L ${nR - rTop} ${pathTop}`,
+      `A ${rTop} ${rTop} 0 0 1 ${nR} ${pathTop + rTop}`,
+      `L ${nR} ${bottomStepY}`,
+      `L ${wR} ${bottomStepY}`,
+      `L ${wR} ${pathBottom - rBot}`,
+      `A ${rBot} ${rBot} 0 0 1 ${wR - rBot} ${pathBottom}`,
+      `L ${wL + rBot} ${pathBottom}`,
+      `A ${rBot} ${rBot} 0 0 1 ${wL} ${pathBottom - rBot}`,
+      `L ${wL} ${bottomStepY}`,
+      `L ${nL} ${bottomStepY}`,
+      `L ${nL} ${pathTop + rTop}`,
+      `A ${rTop} ${rTop} 0 0 1 ${nL + rTop} ${pathTop}`,
+      'Z',
+    ].join(' ')
+  }
+
+  // Both break — wide top, narrow middle, wide bottom
+  const rTop = Math.min(r, topWidth / 2, topZoneH / 2)
+  const rBot = Math.min(r, botWidth / 2, botZoneH / 2)
+  const tL = cx - topPH, tR = cx + topPH
+  const nL = cx - qrPH, nR = cx + qrPH
+  const bL = cx - botPH, bR = cx + botPH
+
+  return [
+    `M ${tL + rTop} ${pathTop}`,
+    `L ${tR - rTop} ${pathTop}`,
+    `A ${rTop} ${rTop} 0 0 1 ${tR} ${pathTop + rTop}`,
+    `L ${tR} ${topStepY}`,
+    `L ${nR} ${topStepY}`,
+    `L ${nR} ${bottomStepY}`,
+    `L ${bR} ${bottomStepY}`,
+    `L ${bR} ${pathBottom - rBot}`,
+    `A ${rBot} ${rBot} 0 0 1 ${bR - rBot} ${pathBottom}`,
+    `L ${bL + rBot} ${pathBottom}`,
+    `A ${rBot} ${rBot} 0 0 1 ${bL} ${pathBottom - rBot}`,
+    `L ${bL} ${bottomStepY}`,
+    `L ${nL} ${bottomStepY}`,
+    `L ${nL} ${topStepY}`,
+    `L ${tL} ${topStepY}`,
+    `L ${tL} ${pathTop + rTop}`,
+    `A ${rTop} ${rTop} 0 0 1 ${tL + rTop} ${pathTop}`,
+    'Z',
+  ].join(' ')
 }

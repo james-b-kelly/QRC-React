@@ -44,7 +44,7 @@ export function renderSVG(options: QROptions, textPanelLayout?: TextPanelLayout)
   const cornerDotFill = resolveColor(cornerDotColor, `cd-${uid}-${gradientId++}`, defs, size)
 
   // Background — container replaces QR bg when text panels are present
-  const hasTextPanels = textPanelLayout && textPanelLayout.containerRect
+  const hasTextPanels = textPanelLayout && textPanelLayout.containerSvg
   const bgColor = options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }
   let bgRect = ''
   if (!hasTextPanels) {
@@ -137,16 +137,11 @@ export function renderSVG(options: QROptions, textPanelLayout?: TextPanelLayout)
   // Text panel support
   if (textPanelLayout) {
     const layout = textPanelLayout
-    const cr = layout.containerRect
-
-    const containerBg = cr
-      ? `<rect x="${cr.x}" y="${cr.y}" width="${cr.width}" height="${cr.height}" rx="${cr.rx}" ry="${cr.rx}" fill="${cr.fill}" fill-opacity="${cr.fillOpacity}" stroke="${cr.stroke}" stroke-width="${cr.strokeWidth}"/>`
-      : ''
 
     const svg = [
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${layout.viewBoxWidth} ${layout.viewBoxHeight}" width="${layout.viewBoxWidth}" height="${layout.viewBoxHeight}">`,
       defsBlock,
-      containerBg,
+      layout.containerSvg,
       `<g transform="translate(${layout.qrOffsetX},${layout.qrOffsetY})">`,
       qrContent,
       '</g>',
