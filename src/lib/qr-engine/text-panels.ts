@@ -160,7 +160,8 @@ export function computeTextPanelLayout(
 /**
  * Build an SVG path for a stepped container shape.
  * The path traces at halfBorder inset from the viewBox edge (centered on the stroke).
- * Outer corners get rounded radii; step transitions are sharp 90° corners.
+ * Outer corners get rounded radii. Step transitions get rounded corners too:
+ * concave arcs (sweep 0) where the path widens, convex arcs (sweep 1) at the new edge.
  */
 function buildSteppedPath(
   cx: number,
@@ -178,7 +179,6 @@ function buildSteppedPath(
   topBreaks: boolean,
   bottomBreaks: boolean,
 ): string {
-  // Path coordinates for each zone (centered, at halfBorder from outer edge)
   const pathHalf = (inner: number) => (inner + halfBorder * 2) / 2
   const topPH = pathHalf(topZoneInner)
   const qrPH = pathHalf(qrZoneInner)
@@ -187,11 +187,9 @@ function buildSteppedPath(
   const pathTop = halfBorder
   const pathBottom = viewBoxHeight - halfBorder
 
-  // Step Y positions (where width transitions happen)
   const topStepY = halfBorder + cPad + topH
   const bottomStepY = halfBorder + cPad + topH + qrSize
 
-  // Zone dimensions for radius clamping
   const topWidth = topPH * 2
   const qrWidth = qrPH * 2
   const botWidth = botPH * 2
@@ -199,28 +197,30 @@ function buildSteppedPath(
   const qrZoneH = bottomStepY - topStepY
   const botZoneH = pathBottom - bottomStepY
 
-  // Clamp radii per zone (half of smallest dimension)
-  const r = targetRadius
-
   if (topBreaks && !bottomBreaks) {
-    // Wide top, narrow bottom — step inward at topStepY
-    const rTop = Math.min(r, topWidth / 2, topZoneH / 2)
-    const rBot = Math.min(r, qrWidth / 2, (qrZoneH + botZoneH) / 2)
+    const rTop = Math.min(targetRadius, topWidth / 2, topZoneH / 2)
+    const rBot = Math.min(targetRadius, qrWidth / 2, (qrZoneH + botZoneH) / 2)
     const wL = cx - topPH, wR = cx + topPH
     const nL = cx - qrPH, nR = cx + qrPH
+    const stepSize = wR - nR
+    const sr = Math.max(0, Math.min(targetRadius, stepSize, topZoneH - rTop, qrZoneH + botZoneH - rBot))
 
     return [
       `M ${wL + rTop} ${pathTop}`,
       `L ${wR - rTop} ${pathTop}`,
       `A ${rTop} ${rTop} 0 0 1 ${wR} ${pathTop + rTop}`,
-      `L ${wR} ${topStepY}`,
-      `L ${nR} ${topStepY}`,
+      `L ${wR} ${topStepY - sr}`,
+      `A ${sr} ${sr} 0 0 0 ${wR - sr} ${topStepY}`,
+      `L ${nR + sr} ${topStepY}`,
+      `A ${sr} ${sr} 0 0 1 ${nR} ${topStepY + sr}`,
       `L ${nR} ${pathBottom - rBot}`,
       `A ${rBot} ${rBot} 0 0 1 ${nR - rBot} ${pathBottom}`,
       `L ${nL + rBot} ${pathBottom}`,
       `A ${rBot} ${rBot} 0 0 1 ${nL} ${pathBottom - rBot}`,
-      `L ${nL} ${topStepY}`,
-      `L ${wL} ${topStepY}`,
+      `L ${nL} ${topStepY + sr}`,
+      `A ${sr} ${sr} 0 0 1 ${nL - sr} ${topStepY}`,
+      `L ${wL + sr} ${topStepY}`,
+      `A ${sr} ${sr} 0 0 0 ${wL} ${topStepY - sr}`,
       `L ${wL} ${pathTop + rTop}`,
       `A ${rTop} ${rTop} 0 0 1 ${wL + rTop} ${pathTop}`,
       'Z',
@@ -228,24 +228,29 @@ function buildSteppedPath(
   }
 
   if (bottomBreaks && !topBreaks) {
-    // Narrow top, wide bottom — step outward at bottomStepY
-    const rTop = Math.min(r, qrWidth / 2, (topZoneH + qrZoneH) / 2)
-    const rBot = Math.min(r, botWidth / 2, botZoneH / 2)
+    const rTop = Math.min(targetRadius, qrWidth / 2, (topZoneH + qrZoneH) / 2)
+    const rBot = Math.min(targetRadius, botWidth / 2, botZoneH / 2)
     const nL = cx - qrPH, nR = cx + qrPH
     const wL = cx - botPH, wR = cx + botPH
+    const stepSize = wR - nR
+    const sr = Math.max(0, Math.min(targetRadius, stepSize, topZoneH + qrZoneH - rTop, botZoneH - rBot))
 
     return [
       `M ${nL + rTop} ${pathTop}`,
       `L ${nR - rTop} ${pathTop}`,
       `A ${rTop} ${rTop} 0 0 1 ${nR} ${pathTop + rTop}`,
-      `L ${nR} ${bottomStepY}`,
-      `L ${wR} ${bottomStepY}`,
+      `L ${nR} ${bottomStepY - sr}`,
+      `A ${sr} ${sr} 0 0 0 ${nR + sr} ${bottomStepY}`,
+      `L ${wR - sr} ${bottomStepY}`,
+      `A ${sr} ${sr} 0 0 1 ${wR} ${bottomStepY + sr}`,
       `L ${wR} ${pathBottom - rBot}`,
       `A ${rBot} ${rBot} 0 0 1 ${wR - rBot} ${pathBottom}`,
       `L ${wL + rBot} ${pathBottom}`,
       `A ${rBot} ${rBot} 0 0 1 ${wL} ${pathBottom - rBot}`,
-      `L ${wL} ${bottomStepY}`,
-      `L ${nL} ${bottomStepY}`,
+      `L ${wL} ${bottomStepY + sr}`,
+      `A ${sr} ${sr} 0 0 0 ${wL + sr} ${bottomStepY}`,
+      `L ${nL - sr} ${bottomStepY}`,
+      `A ${sr} ${sr} 0 0 1 ${nL} ${bottomStepY - sr}`,
       `L ${nL} ${pathTop + rTop}`,
       `A ${rTop} ${rTop} 0 0 1 ${nL + rTop} ${pathTop}`,
       'Z',
@@ -253,28 +258,40 @@ function buildSteppedPath(
   }
 
   // Both break — wide top, narrow middle, wide bottom
-  const rTop = Math.min(r, topWidth / 2, topZoneH / 2)
-  const rBot = Math.min(r, botWidth / 2, botZoneH / 2)
+  const rTop = Math.min(targetRadius, topWidth / 2, topZoneH / 2)
+  const rBot = Math.min(targetRadius, botWidth / 2, botZoneH / 2)
   const tL = cx - topPH, tR = cx + topPH
   const nL = cx - qrPH, nR = cx + qrPH
   const bL = cx - botPH, bR = cx + botPH
+  const topStepSize = tR - nR
+  const botStepSize = bR - nR
+  const srTop = Math.max(0, Math.min(targetRadius, topStepSize, topZoneH - rTop, qrZoneH / 2))
+  const srBot = Math.max(0, Math.min(targetRadius, botStepSize, qrZoneH / 2, botZoneH - rBot))
 
   return [
     `M ${tL + rTop} ${pathTop}`,
     `L ${tR - rTop} ${pathTop}`,
     `A ${rTop} ${rTop} 0 0 1 ${tR} ${pathTop + rTop}`,
-    `L ${tR} ${topStepY}`,
-    `L ${nR} ${topStepY}`,
-    `L ${nR} ${bottomStepY}`,
-    `L ${bR} ${bottomStepY}`,
+    `L ${tR} ${topStepY - srTop}`,
+    `A ${srTop} ${srTop} 0 0 0 ${tR - srTop} ${topStepY}`,
+    `L ${nR + srTop} ${topStepY}`,
+    `A ${srTop} ${srTop} 0 0 1 ${nR} ${topStepY + srTop}`,
+    `L ${nR} ${bottomStepY - srBot}`,
+    `A ${srBot} ${srBot} 0 0 0 ${nR + srBot} ${bottomStepY}`,
+    `L ${bR - srBot} ${bottomStepY}`,
+    `A ${srBot} ${srBot} 0 0 1 ${bR} ${bottomStepY + srBot}`,
     `L ${bR} ${pathBottom - rBot}`,
     `A ${rBot} ${rBot} 0 0 1 ${bR - rBot} ${pathBottom}`,
     `L ${bL + rBot} ${pathBottom}`,
     `A ${rBot} ${rBot} 0 0 1 ${bL} ${pathBottom - rBot}`,
-    `L ${bL} ${bottomStepY}`,
-    `L ${nL} ${bottomStepY}`,
-    `L ${nL} ${topStepY}`,
-    `L ${tL} ${topStepY}`,
+    `L ${bL} ${bottomStepY + srBot}`,
+    `A ${srBot} ${srBot} 0 0 0 ${bL + srBot} ${bottomStepY}`,
+    `L ${nL - srBot} ${bottomStepY}`,
+    `A ${srBot} ${srBot} 0 0 1 ${nL} ${bottomStepY - srBot}`,
+    `L ${nL} ${topStepY + srTop}`,
+    `A ${srTop} ${srTop} 0 0 0 ${nL - srTop} ${topStepY}`,
+    `L ${tL + srTop} ${topStepY}`,
+    `A ${srTop} ${srTop} 0 0 1 ${tL} ${topStepY - srTop}`,
     `L ${tL} ${pathTop + rTop}`,
     `A ${rTop} ${rTop} 0 0 1 ${tL + rTop} ${pathTop}`,
     'Z',
