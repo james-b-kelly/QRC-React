@@ -54,13 +54,18 @@ export function computeTextPanelLayout(
   const leftW = left?.width ?? 0
   const rightW = right?.width ?? 0
 
-  // Core container dimensions (without bounds-breaking panels)
-  const containerWidth = cPad + leftW + qrSize + rightW + cPad + borderWidth * 2
-  const containerHeight = cPad + topH + qrSize + bottomH + cPad + borderWidth * 2
+  // Core container dimensions — first pass to determine if panels break bounds
+  const prelimContainerWidth = cPad + leftW + qrSize + rightW + cPad + borderWidth * 2
 
-  // Check if top/bottom panels break bounds
-  const topBreaks = top && top.width > containerWidth
-  const bottomBreaks = bottom && bottom.width > containerWidth
+  // Check if top/bottom panels break bounds (wider than container)
+  const topBreaks = top && top.width > prelimContainerWidth
+  const bottomBreaks = bottom && bottom.width > prelimContainerWidth
+
+  // Container excludes breaking panels — they get their own background
+  const containerTopH = topBreaks ? 0 : topH
+  const containerBottomH = bottomBreaks ? 0 : bottomH
+  const containerWidth = cPad + leftW + qrSize + rightW + cPad + borderWidth * 2
+  const containerHeight = cPad + containerTopH + qrSize + containerBottomH + cPad + borderWidth * 2
 
   const maxBreakingWidth = Math.max(
     topBreaks ? top!.width : 0,
@@ -69,11 +74,14 @@ export function computeTextPanelLayout(
   const viewBoxWidth = Math.max(containerWidth, maxBreakingWidth)
   const viewBoxOffsetX = (viewBoxWidth - containerWidth) / 2
 
-  const viewBoxHeight = containerHeight
+  // ViewBox height includes the container plus any breaking panels outside it
+  const breakingTopH = topBreaks ? top!.height : 0
+  const breakingBottomH = bottomBreaks ? bottom!.height : 0
+  const viewBoxHeight = breakingTopH + containerHeight + breakingBottomH
 
-  // QR position within the container
+  // QR position: offset by breaking top panel (outside container) + container internals
   const qrOffsetX = viewBoxOffsetX + borderWidth + cPad + leftW
-  const qrOffsetY = borderWidth + cPad + topH
+  const qrOffsetY = breakingTopH + borderWidth + cPad + containerTopH
 
   // Container background rect
   let containerRect: TextPanelLayout['containerRect'] = null
@@ -87,7 +95,7 @@ export function computeTextPanelLayout(
 
     containerRect = {
       x: viewBoxOffsetX + borderWidth / 2,
-      y: borderWidth / 2,
+      y: breakingTopH + borderWidth / 2,
       width: containerWidth - borderWidth,
       height: containerHeight - borderWidth,
       rx,
@@ -116,10 +124,14 @@ export function computeTextPanelLayout(
 
     if (m.position === 'top') {
       panelX = qrOffsetX - leftW - cPad
-      panelY = borderWidth + cPad
+      // Breaking top panel sits above the container; non-breaking sits inside
+      panelY = topBreaks ? 0 : (breakingTopH + borderWidth + cPad)
     } else if (m.position === 'bottom') {
       panelX = qrOffsetX - leftW - cPad
-      panelY = qrOffsetY + qrSize
+      // Breaking bottom panel sits below the container; non-breaking sits inside
+      panelY = bottomBreaks
+        ? (breakingTopH + containerHeight)
+        : (qrOffsetY + qrSize)
     } else if (m.position === 'left') {
       panelX = viewBoxOffsetX + borderWidth + cPad
       panelY = qrOffsetY
