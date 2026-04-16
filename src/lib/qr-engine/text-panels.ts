@@ -100,7 +100,7 @@ export function computeTextPanelLayout(
     const textColor = opts.textColor ?? '#000000'
     const font = opts.font ?? 'Arial'
     const fontWeight = opts.fontWeight ?? '600'
-    const fontSize = (opts.fontSize ?? 0.06) * qrSize
+    const fontSize = (opts.fontSize ?? 0.08) * qrSize
     const lines = opts.text.split('\n')
 
     // Panel position within the viewBox

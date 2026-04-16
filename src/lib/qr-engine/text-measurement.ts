@@ -36,7 +36,7 @@ export function measureTextPanel(
   if (!panel.text.trim()) return null
 
   const { text: textEl } = ensureMeasureElements()
-  const fontSize = (panel.fontSize ?? 0.06) * qrSize
+  const fontSize = (panel.fontSize ?? 0.08) * qrSize
   const font = panel.font ?? 'Arial'
   const fontWeight = panel.fontWeight ?? '600'
   const lineSpacingMultiplier = Math.max(0.5, (panel.lineSpacing ?? 100) / 100)

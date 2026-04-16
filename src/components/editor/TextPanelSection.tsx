@@ -11,12 +11,27 @@ const POSITIONS: { value: TextPosition; label: string }[] = [
 ]
 
 const FONTS = [
+  // Sans-serif
+  { value: 'Inter', label: 'Inter' },
+  { value: 'Roboto', label: 'Roboto' },
+  { value: 'Montserrat', label: 'Montserrat' },
+  { value: 'Poppins', label: 'Poppins' },
+  { value: 'Raleway', label: 'Raleway' },
+  { value: 'Oswald', label: 'Oswald' },
+  // Serif
+  { value: 'Playfair Display', label: 'Playfair Display' },
+  { value: 'Merriweather', label: 'Merriweather' },
+  { value: 'Lora', label: 'Lora' },
+  // Display
+  { value: 'Bebas Neue', label: 'Bebas Neue' },
+  { value: 'Righteous', label: 'Righteous' },
+  { value: 'Pacifico', label: 'Pacifico' },
+  { value: 'Permanent Marker', label: 'Permanent Marker' },
+  // Mono
+  { value: 'Space Mono', label: 'Space Mono' },
+  // System
   { value: 'Arial', label: 'Arial' },
-  { value: 'Verdana', label: 'Verdana' },
-  { value: 'Trebuchet MS', label: 'Trebuchet MS' },
   { value: 'Georgia', label: 'Georgia' },
-  { value: 'Courier New', label: 'Courier New' },
-  { value: 'sans-serif', label: 'System' },
 ]
 
 const DISPLAY_ORDER: TextPosition[] = ['top', 'right', 'bottom', 'left']
@@ -133,9 +148,9 @@ export default function TextPanelSection({ panels, container, onPanelsChange, on
                         <input
                           type="range"
                           min={0.04}
-                          max={0.15}
-                          step={0.005}
-                          value={panel.fontSize ?? 0.06}
+                          max={0.5}
+                          step={0.01}
+                          value={panel.fontSize ?? 0.08}
                           onChange={(e) => updatePanel(panel.position, { fontSize: parseFloat(e.target.value) })}
                           className="flex-1"
                         />
