@@ -152,9 +152,12 @@ export function computeTextPanelLayout(
       const bgR = Math.min(targetR, maxR)
       const bgColor = container?.backgroundColor ?? '#FFFFFF'
       const bgOpacity = container?.backgroundOpacity ?? 1
+      const strokeAttr = borderWidth > 0
+        ? ` stroke="${container?.borderColor ?? '#000000'}" stroke-width="${borderWidth}"`
+        : ''
 
       panelSvgParts.push(
-        `<rect x="${bgX}" y="${bgY}" width="${m.width}" height="${m.height}" rx="${bgR}" ry="${bgR}" fill="${bgColor}" fill-opacity="${bgOpacity}"/>`
+        `<rect x="${bgX + borderWidth / 2}" y="${bgY + borderWidth / 2}" width="${m.width - borderWidth}" height="${m.height - borderWidth}" rx="${bgR}" ry="${bgR}" fill="${bgColor}" fill-opacity="${bgOpacity}"${strokeAttr}/>`
       )
     }
 
