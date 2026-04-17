@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { TextPanelOptions, ContainerOptions, TextPosition } from '../../lib/qr-engine'
 import SectionWrapper from './SectionWrapper'
 import ColorPicker from './ColorPicker'
+import SliderRow from './SliderRow'
 
 const POSITIONS: { value: TextPosition; label: string }[] = [
   { value: 'top', label: 'Top' },
@@ -34,32 +35,6 @@ interface TextPanelSectionProps {
   container: ContainerOptions | undefined
   onPanelChange: (panel: TextPanelOptions | undefined) => void
   onContainerChange: (container: ContainerOptions) => void
-}
-
-function SliderRow({ label, value, displayValue, min, max, step, onChange }: {
-  label: string
-  value: number
-  displayValue: string
-  min: number
-  max: number
-  step: number
-  onChange: (v: number) => void
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-slate-500 w-16 shrink-0">{label}</span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="flex-1 h-1.5"
-      />
-      <span className="text-xs text-slate-400 font-mono w-9 text-right shrink-0">{displayValue}</span>
-    </div>
-  )
 }
 
 export default function TextPanelSection({ panel, container, onPanelChange, onContainerChange }: TextPanelSectionProps) {
@@ -150,12 +125,11 @@ export default function TextPanelSection({ panel, container, onPanelChange, onCo
 
             {/* Weight + Alignment inline */}
             <div className="flex gap-0.5 bg-white rounded-md border border-slate-200 p-0.5">
-              {([['400', 'N'], ['600', 'S'], ['700', 'B']] as const).map(([val, label]) => (
+              {([['400', 'Regular'], ['600', 'Medium'], ['700', 'Bold']] as const).map(([val, label]) => (
                 <button
                   key={val}
                   type="button"
                   onClick={() => update({ fontWeight: val })}
-                  aria-label={`Weight ${val}`}
                   className={`px-2 py-1 rounded text-[10px] font-semibold transition-colors cursor-pointer ${
                     (panel?.fontWeight ?? '600') === val
                       ? 'bg-brand-500 text-white'

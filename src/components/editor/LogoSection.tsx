@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import type { LogoOptions } from '../../lib/qr-engine'
 import SectionWrapper from './SectionWrapper'
+import SliderRow from './SliderRow'
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
 
@@ -85,39 +86,26 @@ export default function LogoSection({ logo, onLogoChange }: LogoSectionProps) {
               </button>
             </div>
 
-            <div>
-              <label htmlFor="logo-size" className="flex items-center justify-between text-xs font-medium text-slate-500 mb-1.5">
-                <span>Size</span>
-                <span className="font-mono">{Math.round((logo.sizeRatio ?? 0.25) * 100)}%</span>
-              </label>
-              <input
-                id="logo-size"
-                type="range"
-                min={10}
-                max={35}
-                value={Math.round((logo.sizeRatio ?? 0.25) * 100)}
-                onChange={(e) => onLogoChange({ ...logo, sizeRatio: Number(e.target.value) / 100 })}
-                aria-valuetext={`${Math.round((logo.sizeRatio ?? 0.25) * 100)}%`}
-                className="w-full"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="logo-padding" className="flex items-center justify-between text-xs font-medium text-slate-500 mb-1.5">
-                <span>Padding</span>
-                <span className="font-mono">{logo.padding ?? 1}</span>
-              </label>
-              <input
-                id="logo-padding"
-                type="range"
-                min={0}
-                max={3}
-                value={logo.padding ?? 1}
-                onChange={(e) => onLogoChange({ ...logo, padding: Number(e.target.value) })}
-                aria-valuetext={`${logo.padding ?? 1} modules`}
-                className="w-full"
-              />
-            </div>
+            <SliderRow
+              label="Size"
+              value={Math.round((logo.sizeRatio ?? 0.25) * 100)}
+              displayValue={`${Math.round((logo.sizeRatio ?? 0.25) * 100)}%`}
+              min={10}
+              max={35}
+              step={1}
+              onChange={(v) => onLogoChange({ ...logo, sizeRatio: v / 100 })}
+              id="logo-size"
+            />
+            <SliderRow
+              label="Padding"
+              value={logo.padding ?? 1}
+              displayValue={`${logo.padding ?? 1}`}
+              min={0}
+              max={3}
+              step={1}
+              onChange={(v) => onLogoChange({ ...logo, padding: v })}
+              id="logo-padding"
+            />
 
             <p className="text-[11px] text-amber-600">Error correction is auto-adjusted when a logo is present.</p>
           </div>

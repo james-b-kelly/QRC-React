@@ -109,12 +109,12 @@ export default function Editor() {
           <PresetsSection onApplyPreset={handleApplyPreset} />
         </div>
 
-        {/* Control groups separated by dividers */}
-        <div className="px-5 py-4 space-y-1 divide-y divide-slate-100">
-          <div className="pb-4">
+        {/* Control groups */}
+        <div className="px-5 py-4 space-y-1">
+          <div className="pb-2 border-b border-slate-200">
             <ContentSection onDataChange={handleDataChange} />
           </div>
-          <div className="py-4">
+          <div className="py-2 border-b border-slate-200">
             <StyleSection
               dotStyle={options.dotStyle ?? 'rounded'}
               cornerOptions={options.cornerOptions ?? {}}
@@ -124,7 +124,7 @@ export default function Editor() {
               onMarginChange={handleMarginChange}
             />
           </div>
-          <div className="py-4">
+          <div className="py-2 border-b border-slate-200">
             <ColorSection
               foregroundColor={options.foregroundColor ?? { type: 'solid', color: '#000000' }}
               backgroundColor={options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }}
@@ -132,10 +132,10 @@ export default function Editor() {
               onBackgroundChange={handleBackgroundChange}
             />
           </div>
-          <div className="py-4">
+          <div className="py-2 border-b border-slate-200">
             <LogoSection logo={options.logo} onLogoChange={handleLogoChange} />
           </div>
-          <div className="py-4">
+          <div className="py-2 border-b border-slate-200">
             <TextPanelSection
               panel={options.textPanel}
               container={options.container}
@@ -143,7 +143,7 @@ export default function Editor() {
               onContainerChange={handleContainerChange}
             />
           </div>
-          <div className="pt-4 pb-2">
+          <div className="pt-2 pb-2">
             <AdvancedSection
               errorCorrectionLevel={options.errorCorrectionLevel ?? 'M'}
               hasLogo={!!options.logo}
