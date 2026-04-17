@@ -178,18 +178,23 @@ export default function TextPanelSection({ panel, container, onPanelChange, onCo
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1.5">Alignment</label>
               <div className="flex gap-1.5">
-                {([['left', 'L'], ['center', 'C'], ['right', 'R']] as const).map(([val, label]) => (
+                {([
+                  ['left', <><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h10M3 18h14" /></>],
+                  ['center', <><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M7 12h10M5 18h14" /></>],
+                  ['right', <><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M11 12h10M7 18h14" /></>],
+                ] as const).map(([val, icon]) => (
                   <button
                     key={val}
                     type="button"
-                    onClick={() => update({ alignment: val })}
-                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                    onClick={() => update({ alignment: val as 'left' | 'center' | 'right' })}
+                    aria-label={`Align ${val}`}
+                    className={`p-2 rounded-lg transition-colors cursor-pointer ${
                       (panel?.alignment ?? 'center') === val
                         ? 'bg-brand-500 text-white'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    {label}
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>{icon}</svg>
                   </button>
                 ))}
               </div>
