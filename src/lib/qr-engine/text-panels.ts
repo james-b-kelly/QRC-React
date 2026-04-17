@@ -61,9 +61,9 @@ export function computeTextPanelLayout(
   const qrOffsetX = cx - qrZoneInner / 2 + cPad + leftW
   const qrOffsetY = borderWidth + cPad + topH
 
-  // Build container SVG element
+  // Build container SVG element — always rendered (container wraps QR with or without text)
   let containerSvg = ''
-  if (measured.length > 0) {
+  {
     const bgColor = container?.backgroundColor ?? '#FFFFFF'
     const bgOpacity = container?.backgroundOpacity ?? 1
     const targetRadius = (container?.cornerRadius ?? 0) * qrSize

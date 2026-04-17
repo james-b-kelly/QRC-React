@@ -9,12 +9,18 @@ export function generateQRCode(options: QROptions): QRResult {
   let textPanelLayout: TextPanelLayout | undefined
 
   const activePanels = options.textPanel?.text.trim() ? [options.textPanel] : []
-  if (activePanels.length > 0) {
+  const hasContainer = options.container && (
+    (options.container.backgroundColor && options.container.backgroundColor !== '#FFFFFF') ||
+    (options.container.cornerRadius && options.container.cornerRadius > 0) ||
+    (options.container.borderWidth && options.container.borderWidth > 0) ||
+    (options.container.padding && options.container.padding > 0) ||
+    (options.container.backgroundOpacity !== undefined && options.container.backgroundOpacity < 1)
+  )
+
+  if (activePanels.length > 0 || hasContainer) {
     const qrSize = options.size ?? 300
     const measured = measureAllPanels(activePanels, qrSize)
-    if (measured.length > 0) {
-      textPanelLayout = computeTextPanelLayout(qrSize, activePanels, measured, options.container)
-    }
+    textPanelLayout = computeTextPanelLayout(qrSize, activePanels, measured, options.container)
   }
 
   const { svg } = renderSVG(options, textPanelLayout)

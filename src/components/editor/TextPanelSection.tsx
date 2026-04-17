@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { TextPanelOptions, ContainerOptions, TextPosition } from '../../lib/qr-engine'
+import type { TextPanelOptions, TextPosition } from '../../lib/qr-engine'
 import SectionWrapper from './SectionWrapper'
 import ColorPicker from './ColorPicker'
 import SliderRow from './SliderRow'
@@ -32,15 +32,11 @@ const FONTS = [
 
 interface TextPanelSectionProps {
   panel: TextPanelOptions | undefined
-  container: ContainerOptions | undefined
   onPanelChange: (panel: TextPanelOptions | undefined) => void
-  onContainerChange: (container: ContainerOptions) => void
 }
 
-export default function TextPanelSection({ panel, container, onPanelChange, onContainerChange }: TextPanelSectionProps) {
+export default function TextPanelSection({ panel, onPanelChange }: TextPanelSectionProps) {
   const [showMoreOptions, setShowMoreOptions] = useState(false)
-
-  const hasText = !!panel?.text.trim()
 
   function update(updates: Partial<TextPanelOptions>) {
     if (!panel) {
@@ -220,65 +216,6 @@ export default function TextPanelSection({ panel, container, onPanelChange, onCo
           </div>
         )}
 
-        {/* ── Container card ── */}
-        {hasText && (
-          <div className="rounded-lg bg-slate-50 p-3 space-y-2.5">
-            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Container</p>
-
-            <ColorPicker
-              color={container?.backgroundColor ?? '#FFFFFF'}
-              onChange={(backgroundColor) => onContainerChange({ ...container, backgroundColor })}
-              label="Fill"
-            />
-
-            <div className="grid grid-cols-2 gap-x-3 gap-y-2">
-              <SliderRow
-                label="Opacity"
-                value={container?.backgroundOpacity ?? 1}
-                displayValue={`${Math.round((container?.backgroundOpacity ?? 1) * 100)}%`}
-                min={0}
-                max={1}
-                step={0.05}
-                onChange={(v) => onContainerChange({ ...container, backgroundOpacity: v })}
-              />
-              <SliderRow
-                label="Radius"
-                value={container?.cornerRadius ?? 0}
-                displayValue={`${Math.round((container?.cornerRadius ?? 0) * 100)}%`}
-                min={0}
-                max={0.15}
-                step={0.005}
-                onChange={(v) => onContainerChange({ ...container, cornerRadius: v })}
-              />
-              <SliderRow
-                label="Border"
-                value={container?.borderWidth ?? 0}
-                displayValue={`${Math.round((container?.borderWidth ?? 0) * 100)}%`}
-                min={0}
-                max={0.10}
-                step={0.004}
-                onChange={(v) => onContainerChange({ ...container, borderWidth: v })}
-              />
-              <SliderRow
-                label="Padding"
-                value={container?.padding ?? 0}
-                displayValue={`${Math.round((container?.padding ?? 0) * 100)}%`}
-                min={0}
-                max={0.10}
-                step={0.005}
-                onChange={(v) => onContainerChange({ ...container, padding: v })}
-              />
-            </div>
-
-            {(container?.borderWidth ?? 0) > 0 && (
-              <ColorPicker
-                color={container?.borderColor ?? '#000000'}
-                onChange={(borderColor) => onContainerChange({ ...container, borderColor })}
-                label="Stroke"
-              />
-            )}
-          </div>
-        )}
       </div>
     </SectionWrapper>
   )

@@ -64,9 +64,7 @@ const COLOR_PALETTES: ColorPalette[] = [
 
 interface ColorSectionProps {
   foregroundColor: ColorConfig
-  backgroundColor: ColorConfig
   onForegroundChange: (color: ColorConfig) => void
-  onBackgroundChange: (color: ColorConfig) => void
 }
 
 const DEFAULT_GRADIENT: GradientConfig = {
@@ -75,10 +73,9 @@ const DEFAULT_GRADIENT: GradientConfig = {
   rotation: 45,
 }
 
-export default function ColorSection({ foregroundColor, backgroundColor, onForegroundChange, onBackgroundChange }: ColorSectionProps) {
+export default function ColorSection({ foregroundColor, onForegroundChange }: ColorSectionProps) {
   const [fgMode, setFgMode] = useState<'solid' | 'gradient'>(foregroundColor.type)
   const [savedGradient, setSavedGradient] = useState<GradientConfig>(foregroundColor.gradient ?? DEFAULT_GRADIENT)
-  const isTransparent = backgroundColor.type === 'solid' && backgroundColor.color === 'transparent'
 
   useEffect(() => {
     setFgMode(foregroundColor.type)
@@ -114,7 +111,6 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
                 title={palette.name}
                 onClick={() => {
                   onForegroundChange(palette.fg)
-                  onBackgroundChange(palette.bg)
                 }}
                 className="flex items-center gap-0 w-8 h-5 rounded-full overflow-hidden border border-slate-200 hover:border-slate-400 hover:scale-110 transition-all duration-150 cursor-pointer"
               >
@@ -159,32 +155,6 @@ export default function ColorSection({ foregroundColor, backgroundColor, onForeg
           )}
         </div>
 
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-medium text-slate-500">Background</p>
-            <label className="flex items-center gap-2 min-h-[44px] text-xs font-medium text-slate-500 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isTransparent}
-                onChange={(e) => {
-                  onBackgroundChange(
-                    e.target.checked
-                      ? { type: 'solid', color: 'transparent' }
-                      : { type: 'solid', color: '#FFFFFF' }
-                  )
-                }}
-                className="w-5 h-5 rounded border-slate-300"
-              />
-              Transparent
-            </label>
-          </div>
-          {!isTransparent && (
-            <ColorPicker
-              color={backgroundColor.color ?? '#FFFFFF'}
-              onChange={(c) => onBackgroundChange({ type: 'solid', color: c })}
-            />
-          )}
-        </div>
       </div>
     </SectionWrapper>
   )

@@ -11,6 +11,7 @@ import AdvancedSection from '../components/editor/AdvancedSection'
 import DownloadButton from '../components/editor/DownloadButton'
 import PresetsSection from '../components/editor/PresetsSection'
 import TextPanelSection from '../components/editor/TextPanelSection'
+import ContainerSection from '../components/editor/ContainerSection'
 import ShareButton from '../components/editor/ShareButton'
 import { getHashState, setHashState } from '../lib/url-state'
 
@@ -54,9 +55,6 @@ export default function Editor() {
   }, [])
   const handleForegroundChange = useCallback((foregroundColor: ColorConfig) => {
     setOptions((prev) => ({ ...prev, foregroundColor }))
-  }, [])
-  const handleBackgroundChange = useCallback((backgroundColor: ColorConfig) => {
-    setOptions((prev) => ({ ...prev, backgroundColor }))
   }, [])
   const handleLogoChange = useCallback((logo: LogoOptions | undefined) => {
     setOptions((prev) => {
@@ -127,20 +125,22 @@ export default function Editor() {
           <div className="py-2 border-b border-slate-200">
             <ColorSection
               foregroundColor={options.foregroundColor ?? { type: 'solid', color: '#000000' }}
-              backgroundColor={options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }}
               onForegroundChange={handleForegroundChange}
-              onBackgroundChange={handleBackgroundChange}
             />
           </div>
           <div className="py-2 border-b border-slate-200">
             <LogoSection logo={options.logo} onLogoChange={handleLogoChange} />
           </div>
           <div className="py-2 border-b border-slate-200">
+            <ContainerSection
+              container={options.container}
+              onChange={handleContainerChange}
+            />
+          </div>
+          <div className="py-2 border-b border-slate-200">
             <TextPanelSection
               panel={options.textPanel}
-              container={options.container}
               onPanelChange={handleTextPanelChange}
-              onContainerChange={handleContainerChange}
             />
           </div>
           <div className="pt-2 pb-2">
