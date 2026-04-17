@@ -94,7 +94,7 @@ export default function Editor() {
 
       {/* ── Mobile: Compact Preview (sticky top) ─── */}
       <div className="shrink-0 md:hidden bg-slate-50 border-b border-slate-200 p-3">
-        <div className="max-w-[160px] mx-auto">
+        <div className="max-w-[280px] max-h-[160px] mx-auto [&>div]:max-h-[160px] [&_svg]:max-h-[160px] [&_svg]:w-auto [&_svg]:mx-auto">
           <QRPreview svg={qrResult.svg} />
         </div>
       </div>
