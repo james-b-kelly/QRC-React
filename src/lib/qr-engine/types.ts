@@ -69,7 +69,7 @@ export interface QROptions {
   logo?: LogoOptions
   margin?: number // modules of quiet zone, default 2
   size?: number // SVG viewBox size in px, default 300
-  textPanels?: TextPanelOptions[]
+  textPanel?: TextPanelOptions
   container?: ContainerOptions
 }
 

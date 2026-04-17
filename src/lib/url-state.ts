@@ -50,7 +50,7 @@ interface CompactState {
   bg?: CompactColor
   ec?: ErrorCorrectionLevel
   m?: number
-  tp?: CompactPanel[]
+  tp?: CompactPanel
   ct?: CompactContainer
 }
 
@@ -148,22 +148,18 @@ export function encodeEditorState(options: QROptions): string {
     state.m = options.margin
   }
 
-  // Text panels — encode style only, no text content
-  if (options.textPanels && options.textPanels.length > 0) {
-    const tp: CompactPanel[] = []
-    for (const panel of options.textPanels) {
-      if (!panel.text.trim()) continue
-      const cp: CompactPanel = { p: panel.position }
-      if (panel.font && panel.font !== 'Arial') cp.f = panel.font
-      if (panel.fontWeight && panel.fontWeight !== '600') cp.w = panel.fontWeight
-      if (panel.fontSize !== undefined && panel.fontSize !== 0.06) cp.s = panel.fontSize
-      if (panel.textColor && panel.textColor !== '#000000') cp.c = panel.textColor
-      if (panel.alignment && panel.alignment !== 'center') cp.a = panel.alignment
-      if (panel.lineSpacing !== undefined && panel.lineSpacing !== 100) cp.l = panel.lineSpacing
-      if (panel.padding !== undefined && panel.padding !== 0.04) cp.pd = panel.padding
-      tp.push(cp)
-    }
-    if (tp.length > 0) state.tp = tp
+  // Text panel — encode style only, no text content
+  if (options.textPanel?.text.trim()) {
+    const panel = options.textPanel
+    const cp: CompactPanel = { p: panel.position }
+    if (panel.font && panel.font !== 'Arial') cp.f = panel.font
+    if (panel.fontWeight && panel.fontWeight !== '600') cp.w = panel.fontWeight
+    if (panel.fontSize !== undefined && panel.fontSize !== 0.08) cp.s = panel.fontSize
+    if (panel.textColor && panel.textColor !== '#000000') cp.c = panel.textColor
+    if (panel.alignment && panel.alignment !== 'center') cp.a = panel.alignment
+    if (panel.lineSpacing !== undefined && panel.lineSpacing !== 100) cp.l = panel.lineSpacing
+    if (panel.padding !== undefined && panel.padding !== 0.04) cp.pd = panel.padding
+    state.tp = cp
   }
 
   if (options.container) {
@@ -209,23 +205,21 @@ export function decodeEditorState(encoded: string): Partial<QROptions> | null {
     if (state.ec && VALID_ECL.has(state.ec)) result.errorCorrectionLevel = state.ec
     if (state.m !== undefined && typeof state.m === 'number') result.margin = state.m
 
-    // V2: text panels
-    if (state.tp && Array.isArray(state.tp)) {
+    // V2: text panel
+    if (state.tp && typeof state.tp === 'object' && !Array.isArray(state.tp)) {
+      const cp = state.tp as CompactPanel
       const validPositions = new Set(['top', 'bottom', 'left', 'right'])
-      const textPanels: TextPanelOptions[] = state.tp
-        .filter((cp: CompactPanel) => validPositions.has(cp.p))
-        .map((cp: CompactPanel): TextPanelOptions => {
-          const panel: TextPanelOptions = { text: '', position: cp.p }
-          if (cp.f) panel.font = cp.f
-          if (cp.w) panel.fontWeight = cp.w
-          if (cp.s !== undefined) panel.fontSize = cp.s
-          if (cp.c) panel.textColor = cp.c
-          if (cp.a) panel.alignment = cp.a
-          if (cp.l !== undefined) panel.lineSpacing = cp.l
-          if (cp.pd !== undefined) panel.padding = cp.pd
-          return panel
-        })
-      if (textPanels.length > 0) result.textPanels = textPanels
+      if (validPositions.has(cp.p)) {
+        const panel: TextPanelOptions = { text: '', position: cp.p }
+        if (cp.f) panel.font = cp.f
+        if (cp.w) panel.fontWeight = cp.w
+        if (cp.s !== undefined) panel.fontSize = cp.s
+        if (cp.c) panel.textColor = cp.c
+        if (cp.a) panel.alignment = cp.a
+        if (cp.l !== undefined) panel.lineSpacing = cp.l
+        if (cp.pd !== undefined) panel.padding = cp.pd
+        result.textPanel = panel
+      }
     }
 
     if (state.ct) {

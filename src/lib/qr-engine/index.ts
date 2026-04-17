@@ -8,7 +8,7 @@ import type { QROptions, QRResult } from './types'
 export function generateQRCode(options: QROptions): QRResult {
   let textPanelLayout: TextPanelLayout | undefined
 
-  const activePanels = options.textPanels?.filter((p) => p.text.trim()) ?? []
+  const activePanels = options.textPanel?.text.trim() ? [options.textPanel] : []
   if (activePanels.length > 0) {
     const qrSize = options.size ?? 300
     const measured = measureAllPanels(activePanels, qrSize)

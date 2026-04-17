@@ -76,8 +76,8 @@ export default function Editor() {
   const handleApplyPreset = useCallback((preset: Pick<QROptions, 'dotStyle' | 'cornerOptions' | 'foregroundColor' | 'backgroundColor'>) => {
     setOptions((prev) => ({ ...prev, ...preset }))
   }, [])
-  const handleTextPanelsChange = useCallback((textPanels: TextPanelOptions[]) => {
-    setOptions((prev) => ({ ...prev, textPanels }))
+  const handleTextPanelChange = useCallback((textPanel: TextPanelOptions | undefined) => {
+    setOptions((prev) => ({ ...prev, textPanel }))
   }, [])
   const handleContainerChange = useCallback((container: ContainerOptions) => {
     setOptions((prev) => ({ ...prev, container }))
@@ -137,9 +137,9 @@ export default function Editor() {
           </div>
           <div className="py-4">
             <TextPanelSection
-              panels={options.textPanels ?? []}
+              panel={options.textPanel}
               container={options.container}
-              onPanelsChange={handleTextPanelsChange}
+              onPanelChange={handleTextPanelChange}
               onContainerChange={handleContainerChange}
             />
           </div>
