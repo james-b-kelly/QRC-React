@@ -36,6 +36,32 @@ interface TextPanelSectionProps {
   onContainerChange: (container: ContainerOptions) => void
 }
 
+function SliderRow({ label, value, displayValue, min, max, step, onChange }: {
+  label: string
+  value: number
+  displayValue: string
+  min: number
+  max: number
+  step: number
+  onChange: (v: number) => void
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-xs text-slate-500 w-16 shrink-0">{label}</span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="flex-1 h-1.5"
+      />
+      <span className="text-xs text-slate-400 font-mono w-9 text-right shrink-0">{displayValue}</span>
+    </div>
+  )
+}
+
 export default function TextPanelSection({ panel, container, onPanelChange, onContainerChange }: TextPanelSectionProps) {
   const [showMoreOptions, setShowMoreOptions] = useState(false)
 
@@ -65,7 +91,7 @@ export default function TextPanelSection({ panel, container, onPanelChange, onCo
   return (
     <SectionWrapper title="Text" defaultOpen={false}>
       <div className="space-y-3">
-        {/* Text input */}
+        {/* ── Text input ── */}
         <div>
           <div className="flex items-center justify-between mb-1">
             <label className="text-xs font-medium text-slate-500">Text</label>
@@ -73,7 +99,7 @@ export default function TextPanelSection({ panel, container, onPanelChange, onCo
               <button
                 type="button"
                 onClick={handleClear}
-                className="text-xs text-slate-400 hover:text-red-500 transition-colors"
+                className="text-xs text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
               >
                 Clear
               </button>
@@ -88,228 +114,195 @@ export default function TextPanelSection({ panel, container, onPanelChange, onCo
           />
         </div>
 
-        {/* Position selector */}
-        <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1.5">Position</label>
-          <div className="flex gap-1.5">
-            {POSITIONS.map((p) => (
-              <button
-                key={p.value}
-                type="button"
-                onClick={() => update({ position: p.value })}
-                className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                  (panel?.position ?? 'bottom') === p.value
-                    ? 'bg-brand-500 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
+        {/* ── Position ── */}
+        <div className="flex gap-1.5">
+          {POSITIONS.map((p) => (
+            <button
+              key={p.value}
+              type="button"
+              onClick={() => update({ position: p.value })}
+              className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                (panel?.position ?? 'bottom') === p.value
+                  ? 'bg-brand-500 text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
 
-        {/* Font & size */}
-        <div className="flex gap-2.5">
-          <div className="flex-1">
-            <label className="block text-xs font-medium text-slate-500 mb-1">Font</label>
+        {/* ── Typography card ── */}
+        <div className="rounded-lg bg-slate-50 p-3 space-y-2.5">
+          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Typography</p>
+
+          {/* Font + Size row */}
+          <div className="flex gap-2">
             <select
               value={panel?.font ?? 'Arial'}
               onChange={(e) => update({ font: e.target.value })}
-              className="w-full h-10 rounded-lg border border-slate-300 px-2.5 text-sm text-slate-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-colors"
+              className="flex-1 h-9 rounded-md border border-slate-200 bg-white px-2 text-xs text-slate-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-colors"
             >
               {FONTS.map((f) => (
                 <option key={f.value} value={f.value}>{f.label}</option>
               ))}
             </select>
+
+            {/* Weight + Alignment inline */}
+            <div className="flex gap-0.5 bg-white rounded-md border border-slate-200 p-0.5">
+              {([['400', 'N'], ['600', 'S'], ['700', 'B']] as const).map(([val, label]) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => update({ fontWeight: val })}
+                  aria-label={`Weight ${val}`}
+                  className={`px-2 py-1 rounded text-[10px] font-semibold transition-colors cursor-pointer ${
+                    (panel?.fontWeight ?? '600') === val
+                      ? 'bg-brand-500 text-white'
+                      : 'text-slate-500 hover:bg-slate-100'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="w-24 shrink-0">
-            <label className="block text-xs font-medium text-slate-500 mb-1">Size</label>
-            <input
-              type="range"
+
+          {/* Size slider + Alignment */}
+          <div className="flex items-center gap-2">
+            <SliderRow
+              label="Size"
+              value={panel?.fontSize ?? 0.08}
+              displayValue={`${Math.round((panel?.fontSize ?? 0.08) * 100)}%`}
               min={0.04}
               max={0.5}
               step={0.01}
-              value={panel?.fontSize ?? 0.08}
-              onChange={(e) => update({ fontSize: parseFloat(e.target.value) })}
-              className="w-full mt-2.5"
+              onChange={(v) => update({ fontSize: v })}
             />
+          </div>
+
+          {/* Color + Alignment row */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <ColorPicker
+                color={panel?.textColor ?? '#000000'}
+                onChange={(textColor) => update({ textColor })}
+              />
+            </div>
+            <div className="flex gap-0.5 bg-white rounded-md border border-slate-200 p-0.5 shrink-0">
+              {([
+                ['left', <path key="l" strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h10M3 18h14" />],
+                ['center', <path key="c" strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M7 12h10M5 18h14" />],
+                ['right', <path key="r" strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M11 12h10M7 18h14" />],
+              ] as const).map(([val, icon]) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => update({ alignment: val as 'left' | 'center' | 'right' })}
+                  aria-label={`Align ${val}`}
+                  className={`p-1.5 rounded transition-colors cursor-pointer ${
+                    (panel?.alignment ?? 'center') === val
+                      ? 'bg-brand-500 text-white'
+                      : 'text-slate-500 hover:bg-slate-100'
+                  }`}
+                >
+                  <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>{icon}</svg>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Text color */}
-        <ColorPicker
-          color={panel?.textColor ?? '#000000'}
-          onChange={(textColor) => update({ textColor })}
-          label="Color"
-        />
-
-        {/* More options toggle */}
+        {/* ── More options ── */}
         <button
           type="button"
           onClick={() => setShowMoreOptions(!showMoreOptions)}
-          className="text-xs text-brand-500 hover:text-brand-600 font-medium transition-colors"
+          className="text-xs text-brand-500 hover:text-brand-600 font-medium transition-colors cursor-pointer"
         >
           {showMoreOptions ? 'Less options' : 'More options'}
         </button>
 
         {showMoreOptions && (
-          <div className="space-y-3 pt-1">
-            <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1.5">Weight</label>
-              <div className="flex gap-1.5">
-                {([['400', 'Normal'], ['600', 'Semi'], ['700', 'Bold']] as const).map(([val, label]) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => update({ fontWeight: val })}
-                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                      (panel?.fontWeight ?? '600') === val
-                        ? 'bg-brand-500 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1.5">Alignment</label>
-              <div className="flex gap-1.5">
-                {([
-                  ['left', <><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h10M3 18h14" /></>],
-                  ['center', <><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M7 12h10M5 18h14" /></>],
-                  ['right', <><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M11 12h10M7 18h14" /></>],
-                ] as const).map(([val, icon]) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => update({ alignment: val as 'left' | 'center' | 'right' })}
-                    aria-label={`Align ${val}`}
-                    className={`p-2 rounded-lg transition-colors cursor-pointer ${
-                      (panel?.alignment ?? 'center') === val
-                        ? 'bg-brand-500 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>{icon}</svg>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
-                <span>Line spacing</span>
-                <span>{panel?.lineSpacing ?? 100}%</span>
-              </div>
-              <input
-                type="range"
-                min={50}
-                max={200}
-                step={5}
-                value={panel?.lineSpacing ?? 100}
-                onChange={(e) => update({ lineSpacing: parseInt(e.target.value) })}
-                className="w-full"
-              />
-            </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
-                <span>Padding</span>
-                <span>{Math.round((panel?.padding ?? 0.04) * 100)}%</span>
-              </div>
-              <input
-                type="range"
-                min={0.01}
-                max={0.10}
-                step={0.005}
-                value={panel?.padding ?? 0.04}
-                onChange={(e) => update({ padding: parseFloat(e.target.value) })}
-                className="w-full"
-              />
-            </div>
+          <div className="rounded-lg bg-slate-50 p-3 space-y-2">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Layout</p>
+            <SliderRow
+              label="Spacing"
+              value={panel?.lineSpacing ?? 100}
+              displayValue={`${panel?.lineSpacing ?? 100}%`}
+              min={50}
+              max={200}
+              step={5}
+              onChange={(v) => update({ lineSpacing: v })}
+            />
+            <SliderRow
+              label="Padding"
+              value={panel?.padding ?? 0.04}
+              displayValue={`${Math.round((panel?.padding ?? 0.04) * 100)}%`}
+              min={0.01}
+              max={0.10}
+              step={0.005}
+              onChange={(v) => update({ padding: v })}
+            />
           </div>
         )}
 
-        {/* Container controls */}
+        {/* ── Container card ── */}
         {hasText && (
-          <div className="border-t border-slate-100 pt-3 mt-3 space-y-3">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Container</p>
+          <div className="rounded-lg bg-slate-50 p-3 space-y-2.5">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Container</p>
+
             <ColorPicker
               color={container?.backgroundColor ?? '#FFFFFF'}
               onChange={(backgroundColor) => onContainerChange({ ...container, backgroundColor })}
-              label="Background"
+              label="Fill"
             />
-            <div>
-              <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
-                <span>Opacity</span>
-                <span>{Math.round((container?.backgroundOpacity ?? 1) * 100)}%</span>
-              </div>
-              <input
-                type="range"
+
+            <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+              <SliderRow
+                label="Opacity"
+                value={container?.backgroundOpacity ?? 1}
+                displayValue={`${Math.round((container?.backgroundOpacity ?? 1) * 100)}%`}
                 min={0}
                 max={1}
                 step={0.05}
-                value={container?.backgroundOpacity ?? 1}
-                onChange={(e) => onContainerChange({ ...container, backgroundOpacity: parseFloat(e.target.value) })}
-                className="w-full"
+                onChange={(v) => onContainerChange({ ...container, backgroundOpacity: v })}
               />
-            </div>
-            <div>
-              <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
-                <span>Corner radius</span>
-                <span>{Math.round((container?.cornerRadius ?? 0) * 100)}%</span>
-              </div>
-              <input
-                type="range"
+              <SliderRow
+                label="Radius"
+                value={container?.cornerRadius ?? 0}
+                displayValue={`${Math.round((container?.cornerRadius ?? 0) * 100)}%`}
                 min={0}
                 max={0.15}
                 step={0.005}
-                value={container?.cornerRadius ?? 0}
-                onChange={(e) => onContainerChange({ ...container, cornerRadius: parseFloat(e.target.value) })}
-                className="w-full"
+                onChange={(v) => onContainerChange({ ...container, cornerRadius: v })}
               />
-            </div>
-            <div>
-              <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
-                <span>Border</span>
-                <span>{Math.round((container?.borderWidth ?? 0) * 100)}%</span>
-              </div>
-              <input
-                type="range"
+              <SliderRow
+                label="Border"
+                value={container?.borderWidth ?? 0}
+                displayValue={`${Math.round((container?.borderWidth ?? 0) * 100)}%`}
                 min={0}
                 max={0.10}
                 step={0.004}
-                value={container?.borderWidth ?? 0}
-                onChange={(e) => onContainerChange({ ...container, borderWidth: parseFloat(e.target.value) })}
-                className="w-full"
+                onChange={(v) => onContainerChange({ ...container, borderWidth: v })}
+              />
+              <SliderRow
+                label="Padding"
+                value={container?.padding ?? 0}
+                displayValue={`${Math.round((container?.padding ?? 0) * 100)}%`}
+                min={0}
+                max={0.10}
+                step={0.005}
+                onChange={(v) => onContainerChange({ ...container, padding: v })}
               />
             </div>
+
             {(container?.borderWidth ?? 0) > 0 && (
               <ColorPicker
                 color={container?.borderColor ?? '#000000'}
                 onChange={(borderColor) => onContainerChange({ ...container, borderColor })}
-                label="Border"
+                label="Stroke"
               />
             )}
-            <div>
-              <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
-                <span>Padding</span>
-                <span>{Math.round((container?.padding ?? 0) * 100)}%</span>
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={0.10}
-                step={0.005}
-                value={container?.padding ?? 0}
-                onChange={(e) => onContainerChange({ ...container, padding: parseFloat(e.target.value) })}
-                className="w-full"
-              />
-            </div>
           </div>
         )}
       </div>
