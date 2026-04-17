@@ -1,6 +1,7 @@
 import type { CornerDotStyle, CornerSquareStyle, DotStyle, CornerOptions } from '../../lib/qr-engine'
 import SectionWrapper from './SectionWrapper'
 import StyleOption from './StyleOption'
+import SliderRow from './SliderRow'
 
 const DOT_STYLES: { value: DotStyle; label: string }[] = [
   { value: 'square', label: 'Square' },
@@ -93,22 +94,16 @@ export default function StyleSection({ dotStyle, cornerOptions, margin, onDotSty
           </div>
         </div>
 
-        <div>
-          <label htmlFor="padding-slider" className="flex items-center justify-between text-xs font-medium text-slate-500 mb-1.5">
-            <span>Padding</span>
-            <span className="font-mono">{margin}</span>
-          </label>
-          <input
-            id="padding-slider"
-            type="range"
-            min={0}
-            max={6}
-            value={margin}
-            onChange={(e) => onMarginChange(Number(e.target.value))}
-            aria-valuetext={`${margin} modules`}
-            className="w-full"
-          />
-        </div>
+        <SliderRow
+          label="Padding"
+          value={margin}
+          displayValue={`${margin}`}
+          min={0}
+          max={6}
+          step={1}
+          onChange={onMarginChange}
+          id="padding-slider"
+        />
       </div>
     </SectionWrapper>
   )

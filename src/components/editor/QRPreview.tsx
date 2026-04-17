@@ -18,7 +18,7 @@ export default function QRPreview({ svg }: QRPreviewProps) {
     <div
       role="img"
       aria-label="QR code preview"
-      className="w-full aspect-square rounded-2xl bg-white shadow-lg ring-1 ring-black/5 [&>svg]:w-full [&>svg]:h-full [&>svg]:rounded-2xl"
+      className="w-full [&>svg]:w-full [&>svg]:h-full"
       dangerouslySetInnerHTML={{ __html: uniqueSvg }}
     />
   )

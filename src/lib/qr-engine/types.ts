@@ -36,13 +36,27 @@ export interface CornerOptions {
   dotColor?: ColorConfig
 }
 
-export type FrameStyle = 'none' | 'banner-bottom' | 'banner-top' | 'rounded-border' | 'pill-label'
+export type TextPosition = 'top' | 'bottom' | 'left' | 'right'
 
-export interface FrameOptions {
-  style: FrameStyle
+export interface TextPanelOptions {
   text: string
-  textColor?: string   // default: white for banners, foreground color for border/pill
-  frameColor?: string  // default: foreground color
+  position: TextPosition
+  font?: string
+  fontWeight?: string
+  fontSize?: number
+  textColor?: string
+  alignment?: 'left' | 'center' | 'right'
+  lineSpacing?: number
+  padding?: number
+}
+
+export interface ContainerOptions {
+  backgroundColor?: string
+  backgroundOpacity?: number
+  cornerRadius?: number
+  borderWidth?: number
+  borderColor?: string
+  padding?: number
 }
 
 export interface QROptions {
@@ -55,7 +69,8 @@ export interface QROptions {
   logo?: LogoOptions
   margin?: number // modules of quiet zone, default 2
   size?: number // SVG viewBox size in px, default 300
-  frame?: FrameOptions
+  textPanel?: TextPanelOptions
+  container?: ContainerOptions
 }
 
 export interface QRMatrix {

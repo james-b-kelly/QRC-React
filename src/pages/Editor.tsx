@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions } from '../lib/qr-engine'
+import type { QROptions, ColorConfig, CornerOptions, DotStyle, ErrorCorrectionLevel, LogoOptions, TextPanelOptions, ContainerOptions } from '../lib/qr-engine'
 import { generateQRCode } from '../lib/qr-engine'
 import SEO from '../components/SEO'
 import QRPreview from '../components/editor/QRPreview'
@@ -10,6 +10,8 @@ import LogoSection from '../components/editor/LogoSection'
 import AdvancedSection from '../components/editor/AdvancedSection'
 import DownloadButton from '../components/editor/DownloadButton'
 import PresetsSection from '../components/editor/PresetsSection'
+import TextPanelSection from '../components/editor/TextPanelSection'
+import ContainerSection from '../components/editor/ContainerSection'
 import ShareButton from '../components/editor/ShareButton'
 import { getHashState, setHashState } from '../lib/url-state'
 
@@ -54,9 +56,6 @@ export default function Editor() {
   const handleForegroundChange = useCallback((foregroundColor: ColorConfig) => {
     setOptions((prev) => ({ ...prev, foregroundColor }))
   }, [])
-  const handleBackgroundChange = useCallback((backgroundColor: ColorConfig) => {
-    setOptions((prev) => ({ ...prev, backgroundColor }))
-  }, [])
   const handleLogoChange = useCallback((logo: LogoOptions | undefined) => {
     setOptions((prev) => {
       const next = { ...prev, logo }
@@ -75,6 +74,12 @@ export default function Editor() {
   const handleApplyPreset = useCallback((preset: Pick<QROptions, 'dotStyle' | 'cornerOptions' | 'foregroundColor' | 'backgroundColor'>) => {
     setOptions((prev) => ({ ...prev, ...preset }))
   }, [])
+  const handleTextPanelChange = useCallback((textPanel: TextPanelOptions | undefined) => {
+    setOptions((prev) => ({ ...prev, textPanel }))
+  }, [])
+  const handleContainerChange = useCallback((container: ContainerOptions) => {
+    setOptions((prev) => ({ ...prev, container }))
+  }, [])
 
   return (
     <div className="h-full flex flex-col md:flex-row">
@@ -87,7 +92,7 @@ export default function Editor() {
 
       {/* ── Mobile: Compact Preview (sticky top) ─── */}
       <div className="shrink-0 md:hidden bg-slate-50 border-b border-slate-200 p-3">
-        <div className="max-w-[160px] mx-auto">
+        <div className="max-w-[280px] max-h-[160px] mx-auto [&>div]:max-h-[160px] [&_svg]:max-h-[160px] [&_svg]:w-auto [&_svg]:mx-auto">
           <QRPreview svg={qrResult.svg} />
         </div>
       </div>
@@ -102,12 +107,12 @@ export default function Editor() {
           <PresetsSection onApplyPreset={handleApplyPreset} />
         </div>
 
-        {/* Control groups separated by dividers */}
-        <div className="px-5 py-4 space-y-1 divide-y divide-slate-100">
-          <div className="pb-4">
+        {/* Control groups */}
+        <div className="px-5 py-4 space-y-1">
+          <div className="pb-2 border-b border-slate-200">
             <ContentSection onDataChange={handleDataChange} />
           </div>
-          <div className="py-4">
+          <div className="py-2 border-b border-slate-200">
             <StyleSection
               dotStyle={options.dotStyle ?? 'rounded'}
               cornerOptions={options.cornerOptions ?? {}}
@@ -117,23 +122,28 @@ export default function Editor() {
               onMarginChange={handleMarginChange}
             />
           </div>
-          <div className="py-4">
+          <div className="py-2 border-b border-slate-200">
             <ColorSection
               foregroundColor={options.foregroundColor ?? { type: 'solid', color: '#000000' }}
-              backgroundColor={options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }}
               onForegroundChange={handleForegroundChange}
-              onBackgroundChange={handleBackgroundChange}
             />
           </div>
-          <div className="py-4">
+          <div className="py-2 border-b border-slate-200">
             <LogoSection logo={options.logo} onLogoChange={handleLogoChange} />
           </div>
-          {/* Frame section — disabled pending further design work (QRC-28)
-          <div className="py-4">
-            <FrameSection frame={options.frame} onFrameChange={handleFrameChange} />
+          <div className="py-2 border-b border-slate-200">
+            <ContainerSection
+              container={options.container}
+              onChange={handleContainerChange}
+            />
           </div>
-          */}
-          <div className="pt-4 pb-2">
+          <div className="py-2 border-b border-slate-200">
+            <TextPanelSection
+              panel={options.textPanel}
+              onPanelChange={handleTextPanelChange}
+            />
+          </div>
+          <div className="pt-2 pb-2">
             <AdvancedSection
               errorCorrectionLevel={options.errorCorrectionLevel ?? 'M'}
               hasLogo={!!options.logo}

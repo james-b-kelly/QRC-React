@@ -1,8 +1,8 @@
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string'
-import type { QROptions, ColorConfig, CornerOptions, DotStyle, CornerSquareStyle, CornerDotStyle, ErrorCorrectionLevel, GradientConfig } from './qr-engine'
+import type { QROptions, ColorConfig, CornerOptions, DotStyle, CornerSquareStyle, CornerDotStyle, ErrorCorrectionLevel, GradientConfig, TextPanelOptions, ContainerOptions } from './qr-engine'
 
 // Version prefix for future schema migration
-const VERSION = 1
+const VERSION = 2
 
 // Short keys to minimize URL length
 interface CompactColor {
@@ -22,6 +22,26 @@ interface CompactCorners {
   dc?: CompactColor
 }
 
+interface CompactPanel {
+  p: TextPanelOptions['position']
+  f?: string      // font
+  w?: string      // fontWeight
+  s?: number      // fontSize
+  c?: string      // textColor
+  a?: 'left' | 'center' | 'right'
+  l?: number      // lineSpacing
+  pd?: number     // padding
+}
+
+interface CompactContainer {
+  bg?: string
+  bo?: number     // backgroundOpacity
+  cr?: number     // cornerRadius
+  bw?: number     // borderWidth
+  bc?: string     // borderColor
+  p?: number      // padding
+}
+
 interface CompactState {
   v: number
   d?: DotStyle
@@ -30,6 +50,8 @@ interface CompactState {
   bg?: CompactColor
   ec?: ErrorCorrectionLevel
   m?: number
+  tp?: CompactPanel
+  ct?: CompactContainer
 }
 
 // Valid values for runtime validation of decoded state
@@ -126,6 +148,32 @@ export function encodeEditorState(options: QROptions): string {
     state.m = options.margin
   }
 
+  // Text panel — encode style only, no text content
+  if (options.textPanel?.text.trim()) {
+    const panel = options.textPanel
+    const cp: CompactPanel = { p: panel.position }
+    if (panel.font && panel.font !== 'Arial') cp.f = panel.font
+    if (panel.fontWeight && panel.fontWeight !== '600') cp.w = panel.fontWeight
+    if (panel.fontSize !== undefined && panel.fontSize !== 0.08) cp.s = panel.fontSize
+    if (panel.textColor && panel.textColor !== '#000000') cp.c = panel.textColor
+    if (panel.alignment && panel.alignment !== 'center') cp.a = panel.alignment
+    if (panel.lineSpacing !== undefined && panel.lineSpacing !== 100) cp.l = panel.lineSpacing
+    if (panel.padding !== undefined && panel.padding !== 0.04) cp.pd = panel.padding
+    state.tp = cp
+  }
+
+  if (options.container) {
+    const ct: CompactContainer = {}
+    let hasCt = false
+    if (options.container.backgroundColor && options.container.backgroundColor !== '#FFFFFF') { ct.bg = options.container.backgroundColor; hasCt = true }
+    if (options.container.backgroundOpacity !== undefined && options.container.backgroundOpacity !== 1) { ct.bo = options.container.backgroundOpacity; hasCt = true }
+    if (options.container.cornerRadius !== undefined && options.container.cornerRadius !== 0) { ct.cr = options.container.cornerRadius; hasCt = true }
+    if (options.container.borderWidth !== undefined && options.container.borderWidth !== 0) { ct.bw = options.container.borderWidth; hasCt = true }
+    if (options.container.borderColor && options.container.borderColor !== '#000000') { ct.bc = options.container.borderColor; hasCt = true }
+    if (options.container.padding !== undefined && options.container.padding !== 0) { ct.p = options.container.padding; hasCt = true }
+    if (hasCt) state.ct = ct
+  }
+
   const json = JSON.stringify(state)
   return compressToEncodedURIComponent(json)
 }
@@ -156,6 +204,35 @@ export function decodeEditorState(encoded: string): Partial<QROptions> | null {
     if (state.bg) result.backgroundColor = expandColor(state.bg)
     if (state.ec && VALID_ECL.has(state.ec)) result.errorCorrectionLevel = state.ec
     if (state.m !== undefined && typeof state.m === 'number') result.margin = state.m
+
+    // V2: text panel
+    if (state.tp && typeof state.tp === 'object' && !Array.isArray(state.tp)) {
+      const cp = state.tp as CompactPanel
+      const validPositions = new Set(['top', 'bottom', 'left', 'right'])
+      if (validPositions.has(cp.p)) {
+        const panel: TextPanelOptions = { text: '', position: cp.p }
+        if (cp.f) panel.font = cp.f
+        if (cp.w) panel.fontWeight = cp.w
+        if (cp.s !== undefined) panel.fontSize = cp.s
+        if (cp.c) panel.textColor = cp.c
+        if (cp.a) panel.alignment = cp.a
+        if (cp.l !== undefined) panel.lineSpacing = cp.l
+        if (cp.pd !== undefined) panel.padding = cp.pd
+        result.textPanel = panel
+      }
+    }
+
+    if (state.ct) {
+      const ct = state.ct as CompactContainer
+      const container: ContainerOptions = {}
+      if (ct.bg) container.backgroundColor = ct.bg
+      if (ct.bo !== undefined) container.backgroundOpacity = ct.bo
+      if (ct.cr !== undefined) container.cornerRadius = ct.cr
+      if (ct.bw !== undefined) container.borderWidth = ct.bw
+      if (ct.bc) container.borderColor = ct.bc
+      if (ct.p !== undefined) container.padding = ct.p
+      result.container = container
+    }
 
     return result
   } catch {

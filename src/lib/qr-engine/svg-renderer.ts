@@ -8,9 +8,9 @@ import type {
 import { generateMatrix, isInFinderPattern } from './matrix'
 import { renderDot } from './dots'
 import { renderCornerDot, renderCornerSquare } from './corners'
-import { computeFrameLayout } from './frames'
+import type { TextPanelLayout } from './text-panels'
 
-export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; effectiveECL: ErrorCorrectionLevel } {
+export function renderSVG(options: QROptions, textPanelLayout?: TextPanelLayout): { svg: string; matrix: QRMatrix; effectiveECL: ErrorCorrectionLevel } {
   const dotStyle = options.dotStyle ?? 'square'
   const margin = options.margin ?? 2
   const size = options.size ?? 300
@@ -43,14 +43,17 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
   const cornerSquareFill = resolveColor(cornerSquareColor, `cs-${uid}-${gradientId++}`, defs, size)
   const cornerDotFill = resolveColor(cornerDotColor, `cd-${uid}-${gradientId++}`, defs, size)
 
-  // Background
+  // Background — container replaces QR bg when text panels are present
+  const hasTextPanels = textPanelLayout && textPanelLayout.containerSvg
   const bgColor = options.backgroundColor ?? { type: 'solid', color: '#FFFFFF' }
   let bgRect = ''
-  if (bgColor.type === 'solid' && bgColor.color === 'transparent') {
-    // No background
-  } else {
-    const bgFill = resolveColor(bgColor, `bg-${uid}-${gradientId++}`, defs, size)
-    bgRect = `<rect x="0" y="0" width="${size}" height="${size}" fill="${bgFill}"/>`
+  if (!hasTextPanels) {
+    if (bgColor.type === 'solid' && bgColor.color === 'transparent') {
+      // No background
+    } else {
+      const bgFill = resolveColor(bgColor, `bg-${uid}-${gradientId++}`, defs, size)
+      bgRect = `<rect x="0" y="0" width="${size}" height="${size}" fill="${bgFill}"/>`
+    }
   }
 
   // Logo: compute cleared area and image position together
@@ -131,22 +134,18 @@ export function renderSVG(options: QROptions): { svg: string; matrix: QRMatrix; 
     logoElement,
   ].join('')
 
-  // Frame support
-  const frame = options.frame
-  const hasFrame = frame && frame.style !== 'none'
-
-  if (hasFrame) {
-    const resolvedFgColor = fgColor.type === 'solid' ? (fgColor.color ?? '#000000') : '#000000'
-    const layout = computeFrameLayout(size, frame, resolvedFgColor)
+  // Text panel support
+  if (textPanelLayout) {
+    const layout = textPanelLayout
 
     const svg = [
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${layout.totalWidth} ${layout.totalHeight}" width="${layout.totalWidth}" height="${layout.totalHeight}">`,
-      layout.backgroundElements,
-      `<g transform="translate(${layout.qrOffsetX},${layout.qrOffsetY})">`,
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${layout.viewBoxWidth} ${layout.viewBoxHeight}" width="${layout.viewBoxWidth}" height="${layout.viewBoxHeight}">`,
       defsBlock,
+      layout.containerSvg,
+      `<g transform="translate(${layout.qrOffsetX},${layout.qrOffsetY})">`,
       qrContent,
       '</g>',
-      layout.foregroundElements,
+      layout.panelElements,
       '</svg>',
     ].join('')
 
